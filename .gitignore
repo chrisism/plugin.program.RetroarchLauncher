@@ -1,0 +1,12 @@
+# Python stuff
+*.pyo
+*.pyc
+
+__pychache__/
+/.cache/
+/.dist/
+/node_modules/
+/.vscode/
+.pytest_cache/v/cache/lastfailed
+.pytest_cache/v/cache/nodeids
+.pytest_cache/v/cache/stepwise

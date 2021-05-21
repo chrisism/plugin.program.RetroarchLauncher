@@ -1,0 +1,22 @@
+{
+  "packagename": "plugin.program.RetroachLauncher",
+  "src": "./",
+  "srcpaths": [
+        "**/*.*",
+        "!tests/**/*.*",
+        "!package-lock.json",
+        "!package.json"
+  ],
+  "dist": "./.dist/",
+  "texturepaths": [
+  ],		
+  "zipfolder": "./.dist/",
+  "repositoryfolder": "C:\\Projects\\kodi\\repository.chrisism\\",
+  "addonsfolder": "%appdata%\\Kodi\\addons\\",
+  "semver": "",
+  "tag": "",
+  "host": "localhost",
+  "port": "8080",
+  "user": "kodi",
+  "password": "kodi"
+}
