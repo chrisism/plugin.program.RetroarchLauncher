@@ -5,14 +5,15 @@
         "**/*.*",
         "!tests/**/*.*",
         "!package-lock.json",
-        "!package.json"
+        "!package.json",
+        "!pyrightconfig.json"
   ],
   "dist": "./.dist/",
   "texturepaths": [
   ],		
   "zipfolder": "./.dist/",
   "repositoryfolder": "C:\\Projects\\kodi\\repository.chrisism\\",
-  "addonsfolder": "%appdata%\\Kodi\\addons\\",
+  "addonsfolder": "C:\\Users\\cjungerius\\AppData\\Roaming\\Kodi\\addons\\",
   "semver": "",
   "tag": "",
   "host": "localhost",

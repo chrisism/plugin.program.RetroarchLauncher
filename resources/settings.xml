@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+<category label="Paths">
+    <setting id="separator" type="lsep" label="Retroarch paths/options"/>
+    <setting label="Retroarch executable" type="folder" id="retroarch_exec_path" default="" source="" />
+    <setting label="Retroarch cores directory" type="folder" id="retroarch_cores_dir" default="" source="" />    
+    <setting label="Retroarch system directory" type="folder" id="retroarch_system_dir" default="" source="" />
+</category>
+<category label="Advanced">
+    <setting label="Action on Kodi playing media" type="enum" id="media_state_action" default="0" values="Stop|Pause|Let Play" />
+    <setting label="After/before launch delay (ms)" type="slider" id="delay_tempo" default="500" range="0,100,15000" option="int"/>
+    <setting label="Suspend/resume Kodi audio engine" type="bool" id="suspend_audio_engine" default="false"/>
+    <setting label="Suspend/resume Kodi screensaver" type="bool" id="suspend_screensaver" default="false" />
+    <setting label="Escape $rom$ quotes" type="bool" id="escape_romfile" default="false" />
+    <setting label="Disable LIRC (Linux only)" type="bool" id="lirc_state" default="true" />
+    <setting label="Show batch command window (Windows only)" type="bool" id="show_batch_window" default="false"/>
+    <setting label="Close file descriptors (Windows only)" type="bool" id="windows_close_fds" default="true"/>
+    <setting label="CD into aplication dir (Windows only)" type="bool" id="windows_cd_apppath" default="true"/>
+    <setting label="Log level" type="enum" id="log_level" default="2" values="ERROR|WARNING|INFO|VERBOSE|DEBUG" />
+</category>
+</settings>

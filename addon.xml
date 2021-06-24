@@ -2,7 +2,7 @@
 <addon id="plugin.program.RetroarchLauncher" name="Retroarch Launcher for AEL" version="0.10.0-alpha.1" provider-name="chrisism">
   <requires>
       <import addon="xbmc.python" version="3.0.0"/>
-      <import addon="script.module.routing" version="0.2.3"/>
+      <import addon="plugin.program.AEL" version="0.10.0"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
       <provides>game</provides>
