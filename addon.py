@@ -21,7 +21,7 @@ from launchers import *
 from utils import kodilogging, text, kodi
 import settings
 
-from resources.lib.launcher import RetroarchLauncher
+from resources.launcher import RetroarchLauncher
 
 kodilogging.config()
 logger = logging.getLogger(__name__)

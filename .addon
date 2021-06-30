@@ -1,5 +1,5 @@
 {
-  "packagename": "plugin.program.RetroachLauncher",
+  "packagename": "plugin.program.RetroarchLauncher",
   "src": "./",
   "srcpaths": [
         "**/*.*",
