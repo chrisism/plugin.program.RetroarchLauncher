@@ -15,16 +15,24 @@ try:
 except ImportError:
     from urllib.parse import urlsplit, parse_qs
 
+# --- Kodi stuff ---
+import xbmcaddon
+
 # AEL main imports
-from globals import *
-from launchers import *
-from utils import kodilogging, text, kodi
-import settings
+from ael.launchers import *
+from ael import settings
+from ael.utils import kodilogging, text, kodi
 
 from resources.launcher import RetroarchLauncher
 
 kodilogging.config()
 logger = logging.getLogger(__name__)
+
+
+# --- Addon object (used to access settings) ---
+addon           = xbmcaddon.Addon()
+addon_id        = addon.getAddonInfo('id')
+addon_version   = addon.getAddonInfo('version')
 
 # ---------------------------------------------------------------------------------------------
 # This is the plugin entry point.

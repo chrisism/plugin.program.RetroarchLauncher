@@ -21,12 +21,13 @@ import logging
 import collections
 import typing
 
+import xbmcaddon
+
 # --- AEL packages ---
-from utils import io, kodi
-from globals import *
-from settings import *
-from executors import *
-from launchers import *
+from ael.utils import io, kodi
+from ael.settings import *
+from ael.executors import *
+from ael.launchers import *
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,10 @@ class RetroarchLauncher(LauncherABC):
     # --------------------------------------------------------------------------------------------
     def get_name(self) -> str: return 'Retroarch Launcher'
     
-    def get_launcher_addon_id(self) -> str: return addon_id
+    def get_launcher_addon_id(self) -> str: 
+        addon = xbmcaddon.Addon()
+        addon_id = addon.getAddonInfo('id')
+        return addon_id
 
     # --------------------------------------------------------------------------------------------
     # Launcher build wizard methods
@@ -316,7 +320,7 @@ class RetroarchLauncher(LauncherABC):
             path_from_setting = path_from_setting[2:]
             return parent_dir.pjoin(path_from_setting, isdir=True)
         else:
-            folder = FileName(path_from_setting, isdir=True)
+            folder = io.FileName(path_from_setting, isdir=True)
             # if '/data/user/0/' in folder.getPath():
             #     alternative_folder = folder.getPath()
             #     alternative_folder = alternative_folder.replace('/data/user/0/', '/data/data/')
@@ -326,7 +330,7 @@ class RetroarchLauncher(LauncherABC):
     def _switch_core_to_info_file(self, core_file, info_folder):
         info_file = core_file.changeExtension('info')
    
-        if is_android():
+        if io.is_android():
             info_file = info_folder.pjoin(info_file.getBase().replace('_android', ''))
         else:
             info_file = info_folder.pjoin(info_file.getBase())
@@ -335,7 +339,7 @@ class RetroarchLauncher(LauncherABC):
 
     def _switch_info_to_core_file(self, info_file, cores_folder, cores_ext):
         core_file = info_file.changeExtension(cores_ext)
-        if is_android():
+        if io.is_android():
             core_file = cores_folder.pjoin(core_file.getBase().replace('.', '_android.'))
         else:
             core_file = cores_folder.pjoin(core_file.getBase())
