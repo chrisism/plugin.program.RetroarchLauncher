@@ -10,3 +10,4 @@ __pychache__/
 .pytest_cache/v/cache/lastfailed
 .pytest_cache/v/cache/nodeids
 .pytest_cache/v/cache/stepwise
+pyrightconfig.json

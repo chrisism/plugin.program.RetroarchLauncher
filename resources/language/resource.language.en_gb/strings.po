@@ -1,0 +1,16 @@
+# Kodi Media Center language file
+# Addon Name: Advanced Emulator Launcher : Retroarch Launcher
+# Addon id: plugin.program.RetroarchLauncher
+msgid ""
+msgstr ""
+
+############################
+# Setting categories
+############################
+msgctxt "#20010"
+msgid "Paths"
+msgstr "settings.xml"
+
+msgctxt "#20011"
+msgid "Advanced"
+msgstr "settings.xml"
