@@ -48,9 +48,9 @@ def run_plugin():
     path = path.rstrip('/')    
     args = parse_qs(sys.argv[2][1:])
     
-    if path.lower() == '/launcher/retroarch':
+    if path.lower() == '/execute':
         launch_rom(args)
-    elif path.lower() == '/launcher/retroarch/configure':
+    elif path.lower() == '/configure':
         configure_launcher(args)
     else:
         kodi.notify('Can only be used as plugin for AEL')

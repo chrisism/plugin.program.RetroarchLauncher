@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" ?>
 <settings version="1">
     <section id="plugin.program.RetroarchLauncher">
-        <category id="ael_retroarch_paths" label="20010" help="">
+        <category id="ael_retroarch_paths" label="30010" help="">
 			<group id="1">
-                <setting id="retroarch_exec_path" type="path" label="Retroarch executable" help="">
+                <setting id="retroarch_exec_path" type="path" label="30101" help="">
 					<default/>
 					<constraints>
 						<sources>
@@ -13,10 +13,10 @@
 						<allowempty>true</allowempty>
 					</constraints>
 					<control type="button" format="path">
-						<heading>Retroarch executable</heading>
+						<heading>30101</heading>
 					</control>
                 </setting>
-                <setting id="retroarch_cores_dir" type="path" label="Retroarch cores directory" help="">
+                <setting id="retroarch_cores_dir" type="path" label="30102" help="">
 					<level>0</level>
 					<default/>
 					<constraints>
@@ -27,10 +27,10 @@
 						<allowempty>true</allowempty>
 					</constraints>
 					<control type="button" format="path">
-						<heading>Retroarch cores directory</heading>
+						<heading>30102</heading>
 					</control>
                 </setting> 
-                <setting id="retroarch_system_dir" type="path" label="Retroarch system directory" help="">
+                <setting id="retroarch_system_dir" type="path" label="30103" help="">
 					<level>0</level>
 					<default/>
 					<constraints>
@@ -41,26 +41,26 @@
 						<allowempty>true</allowempty>
 					</constraints>
 					<control type="button" format="path">
-						<heading>Retroarch system directory</heading>
+						<heading>30103</heading>
 					</control>
                 </setting>
             </group>
         </category>
-        <category id="ael_retroarch_advanced" label="20011">
+        <category id="ael_retroarch_advanced" label="30011">
 			<group id="1">
-                <setting id="media_state_action" type="enum" label="Action on Kodi playing media" help="">
+                <setting id="media_state_action" type="enum" label="30121" help="">
                     <level>0</level>
                     <default>0</default>
                     <constraints>
                         <options>
-                            <option label="Stop">0</option>
-                            <option label="Pause">1</option>
-                            <option label="Let Play">2</option>
+                            <option label="30901">0</option>
+                            <option label="30902">1</option>
+                            <option label="30903">2</option>
                         </options>
                     </constraints>
                     <control type="spinner" format="string"/>
                 </setting>
-                <setting id="delay_tempo" type="slider" label="After/before launch delay (ms)" help="">
+                <setting id="delay_tempo" type="slider" label="30122" help="">
                     <level>0</level>
                     <default>500</default>
                     <constraints>
@@ -72,56 +72,36 @@
                         <popup>false</popup>
                     </control>
                 </setting>
-                <setting id="suspend_audio_engine" type="boolean" label="Suspend/resume Kodi audio engine" help="">
+                <setting id="suspend_audio_engine" type="boolean" label="30123" help="">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="suspend_screensaver" type="boolean" label="Suspend/resume Kodi screensaver" help="">
+                <setting id="suspend_screensaver" type="boolean" label="30124" help="">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="escape_romfile" type="boolean" label="Escape $rom$ quotes" help="">
+                <setting id="escape_romfile" type="boolean" label="30125" help="">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="lirc_state" type="boolean" label="Disable LIRC (Linux only)" help="">
+                <setting id="lirc_state" type="boolean" label="30126" help="">
                     <level>0</level>
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="windows_cd_apppath" type="boolean" label="CD into aplication dir (Windows only)" help="">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="show_batch_window" type="boolean" label="Show batch command window (Windows only)" help="">
-                    <level>0</level>
-                    <default>false</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="windows_close_fds" type="boolean" label="Close file descriptors (Windows only)" help="">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="windows_cd_apppath" type="boolean" label="CD into aplication dir (Windows only)" help="">
-                    <level>0</level>
-                    <default>true</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="log_level" type="enum" label="Log level" help="">
+                <setting id="log_level" type="enum" label="30127" help="">
                     <level>0</level>
                     <default>1</default>
                     <constraints>
                         <options>
-                            <option label="ERROR">0</option>
-                            <option label="WARNING">1</option>
-                            <option label="INFO">2</option>
-                            <option label="VERBOSE">3</option>
-                            <option label="DEBUG">4</option>
+                            <option label="30911">0</option>
+                            <option label="30912">1</option>
+                            <option label="30913">2</option>
+                            <option label="30914">3</option>
+                            <option label="30915">4</option>
                         </options>
                     </constraints>
                     <control type="spinner" format="string"/>
