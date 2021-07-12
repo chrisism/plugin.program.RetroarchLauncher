@@ -12,8 +12,8 @@
   "texturepaths": [
   ],		
   "zipfolder": "./.dist/",
-  "repositoryfolder": "C:\\Projects\\kodi\\repository.chrisism\\",
-  "addonsfolder": "C:\\Users\\cjungerius\\AppData\\Roaming\\Kodi\\addons\\",
+  "repositoryfolder": "/home/cwjungerius/projects/kodi/repository.chrisism/",
+  "addonsfolder": "/home/cwjungerius/projects/addons/",
   "semver": "",
   "tag": "",
   "host": "localhost",

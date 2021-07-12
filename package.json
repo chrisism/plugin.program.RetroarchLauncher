@@ -12,6 +12,7 @@
         "build-pack-patch": "npm run build-patch && addon package",
         "build-pack-minor": "npm run build-minor && addon package",
         "build-pack-major": "npm run build-major && addon package",
+        "build-pack-copy": "npm run build && addon package && cp -r ./.dist/*.zip /mnt/chromeos/MyFiles/Downloads/shared/",
         "build-publish": "npm run build && addon repository",
         "build-publish-alpha": "npm run build-alpha && addon repository",
         "build-publish-patch": "npm run build-patch && addon repository",
@@ -21,7 +22,8 @@
         "build-install-alpha": "npm run build-alpha && addon install",
         "build-install-patch": "npm run build-patch && addon install",
         "build-install-minor": "npm run build-minor && addon install",
-        "build-install-major": "npm run build-major && addon install"
+        "build-install-major": "npm run build-major && addon install",
+        "build-install-copy": "npm run build && addon install && rm -rf /mnt/chromeos/MyFiles/Downloads/shared/plugin.program.RetroarchLauncher || true && cp -r /home/cwjungerius/projects/addons/plugin.program.RetroarchLauncher /mnt/chromeos/MyFiles/Downloads/shared/"
     },
     "devDependencies": {
         "kodi-addon-builder": "^1.2.3"

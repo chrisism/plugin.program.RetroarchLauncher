@@ -99,14 +99,16 @@ class RetroarchLauncher(LauncherABC):
         return super(RetroarchLauncher, self)._build_post_wizard_hook()
 
     def _builder_get_retroarch_app_folder(self):
-        if not io.is_android():
+
+        retroarch_dir = getSetting('retroarch_system_dir')
+        if retroarch_dir != '':        
             # --- All platforms except Android ---
-            retroarch_dir = getSetting('retroarch_system_dir')
             retroarch_folder = io.FileName(retroarch_dir, isdir = True)
             if retroarch_folder.exists():
+                logger.debug('Preset Retroarch directory: {}'.format(retroarch_folder.getPath()))
                 return retroarch_folder.getPath()
 
-        else:
+        if io.is_android():
             # --- Android ---
             android_retroarch_folders = [
                 '/storage/emulated/0/Android/data/com.retroarch/',
@@ -115,10 +117,13 @@ class RetroarchLauncher(LauncherABC):
                 '/data/user/0/com.retroarch'
             ]
             for retroach_folder_path in android_retroarch_folders:
+                logger.debug('_builder_get_retroarch_app_folder() Android testing dir:{}'.format(retroach_folder_path))
                 retroarch_folder = io.FileName(retroach_folder_path)
                 if retroarch_folder.exists():
+                    logger.debug('Preset Retroarch directory: {}'.format(retroarch_folder.getPath()))
                     return retroarch_folder.getPath()
 
+        logger.debug('No Retroarch directory preset')
         return '/'
 
     def _builder_get_available_retroarch_configurations(self, item_key, launcher):
@@ -163,6 +168,7 @@ class RetroarchLauncher(LauncherABC):
 
         parent_dir    = io.FileName(config_file.getDir())
         configuration = config_file.readPropertyFile()
+
         info_folder   = self._create_path_from_retroarch_setting(configuration['libretro_info_path'], parent_dir)
         cores_folder  = self._create_path_from_retroarch_setting(configuration['libretro_directory'], parent_dir)
         logger.debug("get_available_retroarch_cores() scanning path '{0}'".format(cores_folder.getPath()))

@@ -39,10 +39,15 @@ addon_version   = addon.getAddonInfo('version')
 # ---------------------------------------------------------------------------------------------
 def run_plugin():
     # --- Some debug stuff for development ---
-    logger.debug('------------ Called Advanced Emulator Launcher Plugin: Retroarch Launcher ------------')
-    logger.debug('addon.id         "{}"'.format(addon_id))
-    logger.debug('addon.version    "{}"'.format(addon_version))
-    for i in range(len(sys.argv)): logger.debug('sys.argv[{}] "{}"'.format(i, sys.argv[i]))
+    logger.info('------------ Called Advanced Emulator Launcher Plugin: Retroarch Launcher ------------')
+    logger.info('addon.id         "{}"'.format(addon_id))
+    logger.info('addon.version    "{}"'.format(addon_version))
+    logger.info('sys.platform   "{}"'.format(sys.platform))
+    if io.is_android(): logger.info('OS             "Android"')
+    if io.is_windows(): logger.info('OS             "Windows"')
+    if io.is_osx():     logger.info('OS             "OSX"')
+    if io.is_linux():   logger.info('OS             "Linux"')
+    for i in range(len(sys.argv)): logger.info('sys.argv[{}] "{}"'.format(i, sys.argv[i]))
 
     path = urlsplit(sys.argv[0]).path
     path = path.rstrip('/')    
