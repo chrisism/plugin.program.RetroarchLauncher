@@ -21,7 +21,7 @@ import xbmcaddon
 # AEL main imports
 from ael.launchers import *
 from ael import settings
-from ael.utils import kodilogging, text, kodi
+from ael.utils import kodilogging, text, kodi, io
 
 from resources.launcher import RetroarchLauncher
 
@@ -54,9 +54,18 @@ def run_plugin():
     args = parse_qs(sys.argv[2][1:])
     
     if path.lower() == '/execute':
-        launch_rom(args)
+        try:
+            launch_rom(args)
+        except Exception as e:
+            logger.error('Exception while executing ROM', exc_info=e)
+            kodi.notify_error('Failed to execute ROM')
+            
     elif path.lower() == '/configure':
-        configure_launcher(args)
+        try:
+            configure_launcher(args)
+        except Exception as e:
+            logger.error('Exception while configuring ROM', exc_info=e)
+            kodi.notify_error('Failed to configure ROM')
     else:
         kodi.notify('Can only be used as plugin for AEL')
     
@@ -65,7 +74,9 @@ def run_plugin():
 def launch_rom(args):
     logger.debug('Retroarch Launcher: Starting ...')
     launcher_settings   = json.loads(args['settings'][0])
-    arguments           = args['args'][0]
+    arguments           = args['args'][0] if 'args' in args else ''
+    launcher_id         = args['launcher_id'][0]
+    rom_id              = args['rom_id'][0]
 
     execution_settings = ExecutionSettings()
     execution_settings.delay_tempo = settings.getSettingAsInt('delay_tempo')
@@ -74,8 +85,11 @@ def launch_rom(args):
     execution_settings.media_state_action = settings.getSettingAsInt('media_state_action')
     execution_settings.suspend_audio_engine = settings.getSettingAsBool('suspend_audio_engine')
     execution_settings.suspend_screensaver = settings.getSettingAsBool('suspend_screensaver')
-            
-    executor_factory = get_executor_factory()
+    
+    addon_dir = kodi.getAddonDir()
+    report_path = addon_dir.pjoin('reports', True)
+    report_path = report_path.pjoin('{}-{}.txt'.format(launcher_id, rom_id))
+    executor_factory = get_executor_factory(report_path)
     launcher = RetroarchLauncher(executor_factory, execution_settings, launcher_settings)
     launcher.launch(arguments)
 

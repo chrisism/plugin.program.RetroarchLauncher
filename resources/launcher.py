@@ -321,7 +321,7 @@ class RetroarchLauncher(LauncherABC):
     # ---------------------------------------------------------------------------------------------
     # Misc methods
     # ---------------------------------------------------------------------------------------------    
-    def _create_path_from_retroarch_setting(self, path_from_setting, parent_dir):
+    def _create_path_from_retroarch_setting(self, path_from_setting:str, parent_dir:io.FileName):
         if path_from_setting.startswith(':\\'):
             path_from_setting = path_from_setting[2:]
             return parent_dir.pjoin(path_from_setting, isdir=True)
@@ -333,7 +333,7 @@ class RetroarchLauncher(LauncherABC):
             #     folder = FileName(alternative_folder, isdir=True)
             return folder
 
-    def _switch_core_to_info_file(self, core_file, info_folder):
+    def _switch_core_to_info_file(self, core_file, info_folder:io.FileName):
         info_file = core_file.changeExtension('info')
    
         if io.is_android():
