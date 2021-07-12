@@ -92,8 +92,8 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="log_level" type="enum" label="30127" help="">
-                    <level>0</level>
+                <setting id="log_level" type="integer" label="30127" help="">
+                    <level>1</level>
                     <default>1</default>
                     <constraints>
                         <options>
