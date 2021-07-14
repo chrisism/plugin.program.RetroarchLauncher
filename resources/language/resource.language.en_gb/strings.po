@@ -59,6 +59,14 @@ msgid "Disable LIRC (Linux only)"
 msgstr "settings.xml"
 
 msgctxt "#30127"
+msgid "Close file descriptors (Windows only)"
+msgstr "settings.xml"
+
+msgctxt "#30128"
+msgid "CD into aplication dir (Windows only)"
+msgstr "settings.xml"
+
+msgctxt "#30129"
 msgid "Log level"
 msgstr "settings.xml"
 

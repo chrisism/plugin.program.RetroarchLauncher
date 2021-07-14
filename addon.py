@@ -25,7 +25,7 @@ from ael.utils import kodilogging, text, kodi, io
 
 from resources.launcher import RetroarchLauncher
 
-kodilogging.config()
+kodilogging.config() 
 logger = logging.getLogger(__name__)
 
 
@@ -87,10 +87,13 @@ def launch_rom(args):
     execution_settings.suspend_screensaver = settings.getSettingAsBool('suspend_screensaver')
     
     addon_dir = kodi.getAddonDir()
-    report_path = addon_dir.pjoin('reports', True)
+    report_path = addon_dir.pjoin('reports')
     if not report_path.exists(): report_path.makedirs()
     
     report_path = report_path.pjoin('{}-{}.txt'.format(launcher_id, rom_id))
+    logger.info('P ' + report_path.getPath())
+    logger.info('T ' + report_path.getPathTranslated())
+    
     executor_factory = get_executor_factory(report_path)
     launcher = RetroarchLauncher(executor_factory, execution_settings, launcher_settings)
     launcher.launch(arguments)

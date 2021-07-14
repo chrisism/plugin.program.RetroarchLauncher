@@ -92,7 +92,17 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="log_level" type="integer" label="30127" help="">
+                <setting id="windows_close_fds" type="boolean" label="30127" help="">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="windows_cd_apppath" type="boolean" label="30128" help="">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="log_level" type="integer" label="30129" help="">
                     <level>1</level>
                     <default>1</default>
                     <constraints>
