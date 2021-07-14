@@ -88,11 +88,8 @@ def launch_rom(args):
     
     addon_dir = kodi.getAddonDir()
     report_path = addon_dir.pjoin('reports')
-    if not report_path.exists(): report_path.makedirs()
-    
+    if not report_path.exists(): report_path.makedirs()    
     report_path = report_path.pjoin('{}-{}.txt'.format(launcher_id, rom_id))
-    logger.info('P ' + report_path.getPath())
-    logger.info('T ' + report_path.getPathTranslated())
     
     executor_factory = get_executor_factory(report_path)
     launcher = RetroarchLauncher(executor_factory, execution_settings, launcher_settings)
