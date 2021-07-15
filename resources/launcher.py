@@ -252,71 +252,46 @@ class RetroarchLauncher(LauncherABC):
             args += '-e IME com.android.inputmethod.latin/.LatinIME -e REFRESH 60'
 
         return args
-
-    def get_available_cores(self):
-        return self._builder_get_available_retroarch_cores('retro_core_info', self.get_data_dic())
-    
-    def get_available_configs(self):
-        return self._builder_get_available_retroarch_configurations('retro_config', self.get_data_dic())
-
-    def change_application(self):
-        current_application = self.entity_data['application']
-        selected_application = kodi.browse(0, 'Select the Retroarch App path', 'files',
-                                             '', False, False, current_application).decode('utf-8')
-
-        if selected_application is None or selected_application == current_application:
-            return False
-        self.entity_data['application'] = selected_application
-
-        return True
-    
-    def change_config(self, config_path):
-        self.entity_data['retro_config'] = config_path
-
-    def change_core(self, selected_core_file):
-        self._builder_load_selected_core_info(selected_core_file, 'retro_core_info', self.entity_data, True)
     
     # ---------------------------------------------------------------------------------------------
     # Execution methods
     # ---------------------------------------------------------------------------------------------
-    def _launch_selectApplicationToUse(self):
+    def get_application(self) -> str:
+        application = ''
         if io.is_windows():
-            self.application = io.FileName(self.entity_data['application'])
-            self.application = self.application.append('retroarch.exe')  
-            return True
-
+            app = io.FileName(self.launcher_settings['application'])
+            app = app.append('retroarch.exe') 
+            application = app.getPath()
+            
         if io.is_android():
-            self.application = io.FileName('/system/bin/am')
-            return True
+            application = '/system/bin/am'
 
         # TODO other os
-        self.application = ''
+        return application
 
-        return False
-
-    def _launch_selectArgumentsToUse(self):
+    def get_execution_ready_arguments(self, rom_arguments: dict) -> str:
+        arguments = super(RetroarchLauncher, self).get_execution_ready_arguments(rom_arguments)
+        execution_arguments = ''
         if io.is_windows() or io.is_linux():
-            self.arguments =  '-L "$retro_core$" '
-            self.arguments += '-c "$retro_config$" '
-            self.arguments += '"$rom$"'
-            self.arguments += self.entity_data['args']
-            return True
+            execution_arguments =  '-L "{}" '.format(self.launcher_settings['retro_core'])
+            execution_arguments += '-c "{}" '.format(self.launcher_settings['retro_config'])
+            execution_arguments += '"{}"'.format(rom_arguments['file'])
+            execution_arguments += arguments
 
         if io.is_android():
-            android_app_path = self.entity_data['application']
+            android_app_path = self.launcher_settings['application']
             android_app = next(s for s in reversed(android_app_path.split('/')) if s)
 
-            self.arguments =  'start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER '
+            execution_arguments =  'start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER '
 
-            self.arguments += '-n {}/com.retroarch.browser.retroactivity.RetroActivityFuture '.format(android_app)
-            self.arguments += '-e ROM \'$rom$\' '
-            self.arguments += '-e LIBRETRO $retro_core$ '
-            self.arguments += '-e CONFIGFILE $retro_config$ '
-            self.arguments += self.entity_data['args'] if 'args' in self.entity_data else ''
-            return True
-
-        # TODO: other OSes
-        return False
+            execution_arguments += '-n {}/com.retroarch.browser.retroactivity.RetroActivityFuture '.format(android_app)
+            execution_arguments += '-e ROM \'{}\' '.format(rom_arguments['file'])
+            execution_arguments += '-e LIBRETRO {} '.format(self.launcher_settings['retro_core'])
+            execution_arguments += '-e CONFIGFILE {} '.format(self.launcher_settings['retro_config'])
+            execution_arguments += arguments
+        
+        # TODO: other OSes        
+        return execution_arguments
     
     # ---------------------------------------------------------------------------------------------
     # Misc methods

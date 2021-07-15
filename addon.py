@@ -74,7 +74,7 @@ def run_plugin():
 def launch_rom(args):
     logger.debug('Retroarch Launcher: Starting ...')
     launcher_settings   = json.loads(args['settings'][0])
-    arguments           = args['args'][0] if 'args' in args else ''
+    rom_arguments       = json.loads(args['rom_args'][0])
     launcher_id         = args['launcher_id'][0]
     rom_id              = args['rom_id'][0]
 
@@ -93,7 +93,7 @@ def launch_rom(args):
     
     executor_factory = get_executor_factory(report_path)
     launcher = RetroarchLauncher(executor_factory, execution_settings, launcher_settings)
-    launcher.launch(arguments)
+    launcher.launch(rom_arguments)
 
 def configure_launcher(args):
     logger.debug('Retroarch Launcher: Configuring ...')
