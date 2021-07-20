@@ -19,9 +19,6 @@
     <assets>
       <icon>media/icon.png</icon>
       <fanart>media/fanart.jpg</fanart>
-      <screenshot>media/Estuary_ROM_Launcher.jpg</screenshot>
-      <screenshot>media/Estuary_ROM_Console.jpg</screenshot>
-      <screenshot>media/Estuary_ROM_MAME.jpg</screenshot>
     </assets>
     <news>See changelog.txt for information about the latest release.</news>
   </extension>
