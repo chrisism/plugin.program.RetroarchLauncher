@@ -117,6 +117,6 @@ def configure_launcher(args):
 try:
     run_plugin()
 except Exception as ex:
-    message = text.createError(ex)
-    logger.fatal(message)
+    logger.fatal('Exception in plugin', exc_info=ex)
+    kodi.notify_error("General failure")
     
