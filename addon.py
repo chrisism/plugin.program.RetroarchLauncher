@@ -98,18 +98,18 @@ def launch_rom(args):
 def configure_launcher(args):
     logger.debug('Retroarch Launcher: Configuring ...')
 
-    romset_id:str   = args['romset_id'][0] if 'romset_id' in args else None
+    romcollection_id:str   = args['romcollection_id'][0] if 'romcollection_id' in args else None
     launcher_id:str = args['launcher_id'][0] if 'launcher_id' in args else None
     settings:str    = args['settings'][0] if 'settings' in args else None
     
     launcher_settings = json.loads(settings)    
     launcher = RetroarchLauncher(None, None, launcher_settings)
     if launcher_id is None and launcher.build():
-        launcher.store_launcher_settings(romset_id)
+        launcher.store_launcher_settings(romcollection_id)
         return
     
     if launcher_id is not None and launcher.edit():
-        launcher.store_launcher_settings(romset_id, launcher_id)
+        launcher.store_launcher_settings(romcollection_id, launcher_id)
         return
     
     kodi.notify_warn('Cancelled creating launcher')
