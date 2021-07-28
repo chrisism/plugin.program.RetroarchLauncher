@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.RetroarchLauncher" name="Retroarch Launcher for AEL" version="0.10.0-alpha.1" provider-name="chrisism">
+<addon id="script.ael.retroarchlauncher" name="Retroarch Launcher for AEL" version="0.0.1" provider-name="chrisism">
   <requires>
       <import addon="xbmc.python" version="3.0.0"/>
       <import addon="script.module.AEL" version="0.10.0"/>
   </requires>
-  <extension point="xbmc.python.pluginsource" library="addon.py">
+  <extension point="xbmc.python.script" library="default.py">
       <provides>game</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
@@ -15,7 +15,7 @@
     <email>crizizz@gmail.com</email>
     <forum>http://forum.kodi.tv/showthread.php?tid=287826</forum>
     <website>https://github.com/Wintermute0110/plugin.program.AEL/wiki</website>
-    <source>https://github.com/Wintermute0110/plugin.program.AEL</source>
+    <source>https://github.com/chrisism/script.ael.retroarchlauncher</source>
     <assets>
       <icon>media/icon.png</icon>
       <fanart>media/fanart.jpg</fanart>

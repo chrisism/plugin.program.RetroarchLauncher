@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" ?>
 <settings version="1">
-    <section id="plugin.program.RetroarchLauncher">
+    <section id="script.ael.retroarchlauncher">
         <category id="ael_retroarch_paths" label="30010" help="">
 			<group id="1">
                 <setting id="retroarch_exec_path" type="path" label="30101" help="">
@@ -121,13 +121,10 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="ael.launcher.execute_uri" type="string" label="Launcher execution URI" help="">
+                <setting id="ael.plugin_types" type="string" label="AEL plugin type(s)" help="">
                     <level>4</level>
-                    <default>plugin://plugin.program.RetroarchLauncher/execute</default>
-                </setting>
-                <setting id="ael.launcher.configure_uri" type="string" label="Launcher configuration URI" help="">
-                    <level>4</level>
-                    <default>plugin://plugin.program.RetroarchLauncher/configure</default>
+                    <default>LAUNCHER</default>
+                    <!--<default>LAUNCHER|SCRAPER|SCANNER</default>-->
                 </setting>
             </group>
         </category>

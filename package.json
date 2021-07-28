@@ -1,6 +1,6 @@
 {
-    "name": "plugin.program.RetroarchLauncher",
-    "version": "0.10.0-alpha.1",
+    "name": "script.ael.retroarchlauncher",
+    "version": "0.0.1",
     "scripts": {
         "build": "addon build",
         "build-alpha": "addon versioning --semver prerelease --tag alpha && npm run build",
@@ -23,7 +23,7 @@
         "build-install-patch": "npm run build-patch && addon install",
         "build-install-minor": "npm run build-minor && addon install",
         "build-install-major": "npm run build-major && addon install",
-        "build-install-copy": "npm run build && addon install && rm -rf /mnt/chromeos/MyFiles/Downloads/shared/plugin.program.RetroarchLauncher || true && cp -r /home/cwjungerius/projects/addons/plugin.program.RetroarchLauncher /mnt/chromeos/MyFiles/Downloads/shared/"
+        "build-install-copy": "npm run build && addon install && rm -rf /mnt/chromeos/MyFiles/Downloads/shared/script.ael.retroarchlauncher || true && cp -r /home/cwjungerius/projects/addons/script.ael.retroarchlauncher /mnt/chromeos/MyFiles/Downloads/shared/"
     },
     "devDependencies": {
         "kodi-addon-builder": "^1.2.3"
@@ -31,7 +31,7 @@
     "dependencies": {},
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/chrisism/plugin.program.RetroarchLauncher.git"
+        "url": "git+https://github.com/chrisism/script.ael.retroarchlauncher.git"
     },
     "keywords": [
         "kodi",
@@ -40,5 +40,5 @@
     ],
     "author": "chrisism",
     "license": "GPL-2.0",
-    "homepage": "https://github.com/chrisism/plugin.program.RetroarchLauncher#readme"
+    "homepage": "https://github.com/chrisism/script.ael.retroarchlauncher#readme"
 }
