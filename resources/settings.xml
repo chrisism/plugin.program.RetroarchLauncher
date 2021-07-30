@@ -126,6 +126,10 @@
                     <default>LAUNCHER</default>
                     <!--<default>LAUNCHER|SCRAPER|SCANNER</default>-->
                 </setting>
+                <setting id="ael.launcher.friendlyname" type="string" label="Launcher friendlyname" help="">
+                    <level>4</level>
+                    <default>Retroarch launcher</default>
+                </setting>
             </group>
         </category>
     </section>
