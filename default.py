@@ -48,13 +48,12 @@ def run_plugin():
     parser = argparse.ArgumentParser(prog='script.ael.retroarchlauncher')
     parser.add_argument('--cmd', help="Command to execute", choices=['launch', 'scan', 'scrape', 'configure'])
     parser.add_argument('--type',help="Plugin type", choices=['LAUNCHER', 'SCANNER', 'SCRAPER'], default=constants.AddonType.LAUNCHER.name)
-    parser.add_argument('--romcollection_id', type=str, help="ROM Collection ID")
+    parser.add_argument('--server_host', type=str, help="Host")
+    parser.add_argument('--server_port', type=int, help="Port")
     parser.add_argument('--rom_id', type=str, help="ROM ID")
-    parser.add_argument('--launcher_id', type=str, help="Launcher configuration ID")
-    parser.add_argument('--rom', type=str, help="ROM data dictionary")
-    parser.add_argument('--rom_args', type=str)
-    parser.add_argument('--settings', type=str)
-    parser.add_argument('--is_non_blocking', type=bool, default=False)
+    parser.add_argument('--romcollection_id', type=str, help="ROM Collection ID")
+    parser.add_argument('--ael_addon_id', type=str, help="Addon configuration ID")
+    parser.add_argument('--settings', type=json.loads, help="Specific run setting")
     
     try:
         args = parser.parse_args()
@@ -76,13 +75,12 @@ def run_plugin():
 # Arguments: --settings (json) --rom_args (json) --is_non_blocking --launcher_id --rom_id
 def launch_rom(args):
     logger.debug('Retroarch Launcher: Starting ...')
-    launcher_settings   = json.loads(args.settings)
-    rom_arguments       = json.loads(args.rom_args)
+    
     try:
         execution_settings = ExecutionSettings()
         execution_settings.delay_tempo              = settings.getSettingAsInt('delay_tempo')
         execution_settings.display_launcher_notify  = settings.getSettingAsBool('display_launcher_notify')
-        execution_settings.is_non_blocking          = True if args.is_non_blocking == 'true' else False
+        execution_settings.is_non_blocking          = settings.getSettingAsBool('is_non_blocking')
         execution_settings.media_state_action       = settings.getSettingAsInt('media_state_action')
         execution_settings.suspend_audio_engine     = settings.getSettingAsBool('suspend_audio_engine')
         execution_settings.suspend_screensaver      = settings.getSettingAsBool('suspend_screensaver')
@@ -90,11 +88,20 @@ def launch_rom(args):
         addon_dir = kodi.getAddonDir()
         report_path = addon_dir.pjoin('reports')
         if not report_path.exists(): report_path.makedirs()    
-        report_path = report_path.pjoin('{}-{}.txt'.format(args.launcher_id, args.rom_id))
+        report_path = report_path.pjoin('{}-{}.txt'.format(args.ael_addon_id, args.rom_id))
         
         executor_factory = get_executor_factory(report_path)
-        launcher = RetroarchLauncher(executor_factory, execution_settings, launcher_settings)
-        launcher.launch(rom_arguments)
+        launcher = RetroarchLauncher(
+            args.ael_addon_id, 
+            args.romcollection_id, 
+            args.rom_id, 
+            args.server_host, 
+            args.server_port,
+            executor_factory, 
+            execution_settings)
+        
+        launcher.launch()
+        
     except Exception as e:
         logger.error('Exception while executing ROM', exc_info=e)
         kodi.notify_error('Failed to execute ROM')     
@@ -102,14 +109,16 @@ def launch_rom(args):
 # Arguments: --settings (json) --scanner_id (opt) --romcollection_id --launcher_settings (opt)
 def configure_launcher(args):
     logger.debug('Retroarch Launcher: Configuring ...')
-    launcher_settings = json.loads(args.settings)    
-    launcher = RetroarchLauncher(None, None, launcher_settings)
-    if args.launcher_id is None and launcher.build():
-        launcher.store_launcher_settings(args.romcollection_id)
-        return
     
-    if args.launcher_id is not None and launcher.edit():
-        launcher.store_launcher_settings(args.romcollection_id, args.launcher_id)
+    launcher = RetroarchLauncher(
+            args.ael_addon_id, 
+            args.romcollection_id, 
+            args.rom_id, 
+            args.server_host, 
+            args.server_port)
+        
+    if launcher.build():
+        launcher.store_settings()
         return
     
     kodi.notify_warn('Cancelled creating launcher')
