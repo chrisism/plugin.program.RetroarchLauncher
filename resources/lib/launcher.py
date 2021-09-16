@@ -65,23 +65,6 @@ class RetroarchLauncher(LauncherABC):
         wizard = kodi.WizardDialog_Keyboard(wizard, 'args', 'Extra application arguments')
 
         return wizard
-    
-    def _editor_get_wizard(self, wizard):
-        logger.debug('RetroarchLauncher::_editor_get_wizard() Starting ...')
-        wizard = kodi.WizardDialog_FileBrowse(wizard, 'application', 'Select the Retroarch path',
-            0, '')
-        wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_config', 'Select the configuration',
-            self._builder_get_available_retroarch_configurations)
-        wizard = kodi.WizardDialog_FileBrowse(wizard, 'retro_config', 'Select the configuration',
-            0, '', None, self._builder_user_selected_custom_browsing)
-        wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_core_info', 'Select the core',
-            self._builder_get_available_retroarch_cores, self._builder_load_selected_core_info)
-        wizard = kodi.WizardDialog_Keyboard(wizard, 'retro_core_info', 'Enter path to core file',
-            self._builder_load_selected_core_info, self._builder_user_selected_custom_browsing)
-        wizard = kodi.WizardDialog_Keyboard(wizard, 'args', 'Extra application arguments')
-        
-        return wizard
-            
     #
     # In all platforms except Android:
     #   1) Check if user has configured the Retroarch executable, cores and system dir.
@@ -258,7 +241,57 @@ class RetroarchLauncher(LauncherABC):
             args += '-e IME com.android.inputmethod.latin/.LatinIME -e REFRESH 60'
 
         return args
+        
+    def _builder_get_edit_options(self):
+        options = collections.OrderedDict()
+        options[self._change_retroarch_path]    = 'Change Retroarch path ({})'.format(self.launcher_settings['application'])
+        options[self._change_config]            = "Change config: '{0}'".format(self.launcher_settings['retro_config'])
+        options[self._change_core]              = "Change core: '{0}'".format(self.launcher_settings['retro_core'])
+        options[self._change_launcher_arguments]= "Modify Arguments: '{0}'".format(self.launcher_settings['args'])
     
+    def _change_retroarch_path(self):
+        current_application = self.launcher_settings['application']
+        selected_application = kodi.browse(0, 'Select the Retroarch App path', 'files',
+                                            '', False, False, current_application)
+
+        if selected_application is None or selected_application == current_application:
+            return
+        
+        self.launcher_settings['application'] = selected_application
+        
+    def _change_config(self, config_path):
+        options = self._builder_get_available_retroarch_configurations('retro_config', self.launcher_settings)
+        dialog = kodi.OrdDictionaryDialog()
+        
+        selected_option = dialog.select('Select Retroarch config', options)
+            
+        if selected_option is None:
+            logger.debug('_change_config(): Selected option = NONE')
+            return
+                
+        logger.debug('_change_config(): Selected option = {0}'.format(selected_option))
+        self.launcher_settings['retro_config'] = selected_option
+
+    def _change_core(self):
+        options = self._builder_get_available_retroarch_cores('retro_core_info', self.launcher_settings)
+        dialog = kodi.OrdDictionaryDialog()
+    
+        selected_option = dialog.select('Select Retroach Core', options)
+     
+        if selected_option is None:
+            logger.debug('_change_core(): Selected option = NONE')
+            return
+                
+        logger.debug('_change_core(): Selected option = {0}'.format(selected_option))
+        self._builder_load_selected_core_info(selected_option, 'retro_core_info', self.launcher_settings, True)
+            
+    def _change_launcher_arguments(self):
+        args = self.launcher_settings['args']
+        args = kodi.dialog_keyboard('Edit application arguments', text=args)
+
+        if args is None: return
+        self.launcher_settings['args'] = args
+        
     # ---------------------------------------------------------------------------------------------
     # Execution methods
     # ---------------------------------------------------------------------------------------------
