@@ -242,12 +242,13 @@ class RetroarchLauncher(LauncherABC):
 
         return args
         
-    def _builder_get_edit_options(self):
+    def _builder_get_edit_options(self) -> dict:
         options = collections.OrderedDict()
         options[self._change_retroarch_path]    = 'Change Retroarch path ({})'.format(self.launcher_settings['application'])
         options[self._change_config]            = "Change config: '{0}'".format(self.launcher_settings['retro_config'])
         options[self._change_core]              = "Change core: '{0}'".format(self.launcher_settings['retro_core'])
         options[self._change_launcher_arguments]= "Modify Arguments: '{0}'".format(self.launcher_settings['args'])
+        return options
     
     def _change_retroarch_path(self):
         current_application = self.launcher_settings['application']
