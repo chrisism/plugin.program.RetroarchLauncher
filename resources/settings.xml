@@ -124,11 +124,10 @@
                 <setting id="ael.plugin_types" type="string" label="AEL plugin type(s)" help="">
                     <level>4</level>
                     <default>LAUNCHER</default>
-                    <!--<default>LAUNCHER|SCRAPER|SCANNER</default>-->
                 </setting>
                 <setting id="ael.launcher.friendlyname" type="string" label="Launcher friendlyname" help="">
                     <level>4</level>
-                    <default>Retroarch launcher</default>
+                    <default>Retroarch</default>
                 </setting>
             </group>
         </category>
