@@ -325,7 +325,7 @@ class RetroarchLauncher(LauncherABC):
             arguments += '-n {}/com.retroarch.browser.retroactivity.RetroActivityFuture '.format(android_app)
             arguments += '-e ROM \'$rom$\' '
             arguments += '-e LIBRETRO {} '.format(self.launcher_settings['retro_core'])
-            arguments += '-e CONFIGFILE {} '.format(self.launcher_settings['retro_config'])
+            arguments += '-e CONFIGFILE {}'.format(self.launcher_settings['retro_config'])
             
         original_arguments = self.launcher_settings['args'] if 'args' in self.launcher_settings else ''
         self.launcher_settings['args'] = '{} {}'.format(arguments, original_arguments)
