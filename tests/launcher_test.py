@@ -70,7 +70,7 @@ class Test_Launcher(unittest.TestCase):
         rom = ROMObj({
             'id': rom_id,
             'm_name': 'TestCase',
-            'filename': 'superrom.zip'
+            'scanned_data': {'file': 'superrom.zip'}
         })
         api_rom_mock.return_value = rom
 
