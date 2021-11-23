@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Advanced Emulator Launcher: Base launchers
+# Advanced Emulator Launcher: Retroarch launcher
 #
-# Copyright (c) 2016-2018 Wintermute0110 <wintermute0110@gmail.com>
+# Copyright (c) Chrisism <crizizz@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
