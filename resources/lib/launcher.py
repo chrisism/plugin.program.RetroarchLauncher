@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Advanced Emulator Launcher: Retroarch launcher
+# Advanced Kodi Launcher: Retroarch launcher
 #
 # Copyright (c) Chrisism <crizizz@gmail.com>
 #

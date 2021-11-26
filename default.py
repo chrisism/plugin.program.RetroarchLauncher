@@ -35,7 +35,7 @@ addon_version   = addon.getAddonInfo('version')
 # ---------------------------------------------------------------------------------------------
 def run_plugin():
     # --- Some debug stuff for development ---
-    logger.info('------------ Called Advanced Emulator Launcher Plugin: Retroarch Launcher ------------')
+    logger.info('------------ Called Advanced Kodi Launcher Plugin: Retroarch Launcher ------------')
     logger.info('addon.id         "{}"'.format(addon_id))
     logger.info('addon.version    "{}"'.format(addon_version))
     logger.info('sys.platform     "{}"'.format(sys.platform))
@@ -67,7 +67,7 @@ def run_plugin():
     else:
         kodi.dialog_OK(text=parser.format_help())
     
-    logger.debug('Advanced Emulator Launcher Plugin:  Retroarch Launcher -> exit')
+    logger.debug('Advanced Kodi Launcher Plugin:  Retroarch Launcher -> exit')
     
 # ---------------------------------------------------------------------------------------------
 # Launcher methods.

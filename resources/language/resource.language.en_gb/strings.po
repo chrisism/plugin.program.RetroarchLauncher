@@ -1,5 +1,5 @@
 # Kodi Media Center language file
-# Addon Name: Advanced Emulator Launcher : Retroarch Launcher
+# Addon Name: Advanced Kodi Launcher : Retroarch Launcher
 # Addon id: script.ael.retroarchlauncher
 msgid ""
 msgstr ""
