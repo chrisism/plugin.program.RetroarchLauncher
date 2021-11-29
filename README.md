@@ -3,7 +3,7 @@
 ## script.ael.retroarchlauncher
 | Release | Status |
 |----|----|
-| Stable | [![Build Status](https://dev.azure.com/jnpro/AKL/_apis/build/status/script.akl.retroarchlauncher?branchName=main)](https://dev.azure.com/jnpro/AKL/_build/latest?definitionId=5&branchName=main)|
+| Stable | [![Build Status](https://dev.azure.com/jnpro/AKL/_apis/build/status/script.akl.retroarchlauncher?branchName=main)](https://dev.azure.com/jnpro/AKL/_build/latest?definitionId=7&branchName=main)|
 
 Retroarch Launcher for AKL
 
