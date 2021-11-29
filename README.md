@@ -1,19 +1,23 @@
-# script.ael.retroarchlauncher
-Retroarch Launcher for AEL
 
 # Retroarch Launcher
+## script.ael.retroarchlauncher
+| Release | Status |
+|----|----|
+| Stable | [![Build Status](https://dev.azure.com/jnpro/AKL/_apis/build/status/script.akl.retroarchlauncher?branchName=main)](https://dev.azure.com/jnpro/AKL/_build/latest?definitionId=5&branchName=main)|
+
+Retroarch Launcher for AKL
 
 The Retroarch launcher depends on an Retroarch instance to be able to launch the scanned ROM files.
 Get your copy from the [Retroarch website](http://www.retroarch.com/).
 
 ## Creating a Retroarch Launcher
 
-When you create a Retroarch launcher AEL will try to find all Retroarch configuration files available
+When you create a Retroarch launcher AKL will try to find all Retroarch configuration files available
 in the application folder. Either select one of the found configuration files or specify the path to
-the configuration file manually. Once given AEL will automatically load the configuration file and
+the configuration file manually. Once given AKL will automatically load the configuration file and
 use the configured cores and infos folder to present the list of available cores.
 
-When you select the desired core AEL will also apply the default ROM extensions of the core and use
+When you select the desired core AKL will also apply the default ROM extensions of the core and use
 the systemname and manufactorer as default information for the launcher. All of this you can change
 in the following steps after selecting the core.
 
