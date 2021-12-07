@@ -1,6 +1,6 @@
 # Kodi Media Center language file
 # Addon Name: Advanced Kodi Launcher : Retroarch Launcher
-# Addon id: script.ael.retroarchlauncher
+# Addon id: script.akl.retroarchlauncher
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"

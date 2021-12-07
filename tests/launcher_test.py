@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 from fakes import FakeFile, FakeExecutor, random_string
 
 from resources.lib.launcher import RetroarchLauncher
-from ael.launchers import ExecutionSettings
-from ael.api import ROMObj
-from ael.utils import io
+from akl.launchers import ExecutionSettings
+from akl.api import ROMObj
+from akl.utils import io
 
 class Test_Launcher(unittest.TestCase):
     
@@ -35,11 +35,11 @@ class Test_Launcher(unittest.TestCase):
     @patch('resources.lib.launcher.io.is_windows')
     @patch('resources.lib.launcher.io.is_android')
     @patch('resources.lib.launcher.io.is_linux')    
-    @patch('ael.launchers.kodi', autospec=True)
-    @patch('ael.utils.io.FileName', side_effect = FakeFile)
-    @patch('ael.api.client_get_rom')
-    @patch('ael.api.client_get_collection_launcher_settings')
-    @patch('ael.executors.ExecutorFactory')
+    @patch('akl.launchers.kodi', autospec=True)
+    @patch('akl.utils.io.FileName', side_effect = FakeFile)
+    @patch('akl.api.client_get_rom')
+    @patch('akl.api.client_get_collection_launcher_settings')
+    @patch('akl.executors.ExecutorFactory')
     def test_if_retroarch_launcher_will_apply_the_correct_arguments_when_running_on_android(self, 
             factory_mock:MagicMock, api_settings_mock:MagicMock, api_rom_mock: MagicMock, filename_mock, kodi_mock,
             is_linux_mock:MagicMock,is_android_mock:MagicMock, is_win_mock:MagicMock):
@@ -90,7 +90,7 @@ class Test_Launcher(unittest.TestCase):
         
 
     @patch('resources.lib.launcher.io.is_android')
-    @patch('ael.api.client_get_collection_launcher_settings')
+    @patch('akl.api.client_get_collection_launcher_settings')
     def test_retroarchlauncher_switching_core_to_info_file(self, api_settings_mock:MagicMock, is_android_mock:MagicMock):
         # arrange
         is_android_mock.return_value = True
