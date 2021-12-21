@@ -20,10 +20,6 @@
       <icon>media/icon.png</icon>
       <fanart>media/fanart.jpg</fanart>
     </assets>
-    <news>
-      Here comes the changelog
-      It contains a lot of things
-      and lines
-    </news>
+    <news>Changelog for addon</news>
   </extension>
 </addon>

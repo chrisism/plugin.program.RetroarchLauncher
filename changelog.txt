@@ -1,2 +1,2 @@
-[B]v1.0.0[/B][CR]
+[B]v1.0.0[/B]
  - Initial release of AKL plugin
