@@ -14,12 +14,16 @@
     <license>GNU General Public License version 2</license>
     <email>crizizz@gmail.com</email>
     <forum>http://forum.kodi.tv/showthread.php?tid=287826</forum>
-    <website>https://github.com/Wintermute0110/plugin.program.AKL/wiki</website>
+    <website>https://github.com/chrisism/plugin.program.akl/wiki</website>
     <source>https://github.com/chrisism/script.akl.retroarchlauncher</source>
     <assets>
       <icon>media/icon.png</icon>
       <fanart>media/fanart.jpg</fanart>
     </assets>
-    <news>See changelog.txt for information about the latest release.</news>
+    <news>
+      Here comes the changelog
+      It contains a lot of things
+      and lines
+    </news>
   </extension>
 </addon>

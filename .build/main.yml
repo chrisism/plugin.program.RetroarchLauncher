@@ -1,3 +1,4 @@
+
 # Azure Devops Pipeline definition
 # 
 # Will build and release packages on Gitflow branch triggers (main, release/*).
@@ -31,6 +32,7 @@ variables:
   isHotfix: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')}}
   isDev: ${{eq(variables['Build.SourceBranch'], 'refs/heads/dev')}}
   workingDirectory: '$(Build.SourcesDirectory)'
+  addonName: script.akl.retroarchlauncher
 
 stages:
 - stage: Build
@@ -66,43 +68,68 @@ stages:
           PathToFile: 'addon.xml'
           RegEx: 'version="\d+\.\d+\.\d+.*" provider'
           ValueToReplace: 'version="$(packageVersion)" provider'
+    
+      - task: PythonScript@0
+        displayName: 'Add changelog in addon.xml'
+        inputs:
+          scriptSource: 'inline'
+          arguments: '$(workingDirectory)/addon.xml $(workingDirectory)/changelog.txt'
+          script: |
+            import sys, os, re
+
+            addon_file = sys.argv[1]
+            changelog_file = sys.argv[2]
+            addon_xml = '' 
+            changelog_txt = ''
+            
+            with open(addon_file, 'r') as f:
+              addon_xml = f.read()
+            with open(changelog_file, 'r') as f:
+              changelog_txt = f.read()
+
+            changelog.replace('\n', '')
+            addon_xml = re.sub(r'<news>(.*)?</news>', f'<news>{changelog_txt}</news>', addon_xml)
+            with open(addon_file, 'w') as f:
+              f.write(addon_xml)
+          workingDirectory: '$(workingDirectory)'
           
       - task: CopyFiles@2
         displayName: 'Copy addon files for package'
         inputs:
           SourceFolder: ''
           Contents: |
+              *.py
               *.md
               *.xml
-              *.py
+              *.txt
               resources/**/*.*
               media/**/*.*
-          TargetFolder: '$(build.artifactstagingdirectory)/scriptakl.retroarchlauncher/'
+          TargetFolder: '$(build.artifactstagingdirectory)/$(addonName)/'
           CleanTargetFolder: true
           flattenFolders: false
           OverWrite: true
 
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: '$(build.artifactstagingdirectory)/scriptakl.retroarchlauncher'
+          rootFolderOrFile: '$(build.artifactstagingdirectory)/$(addonName)'
           includeRootFolder: true
           archiveType: 'zip'
-          archiveFile: '$(build.artifactstagingdirectory)/package/scriptakl.retroarchlauncher-$(packageVersion).zip'
+          archiveFile: '$(build.artifactstagingdirectory)/package/$(addonName)-$(packageVersion).zip'
           replaceExistingArchive: true
  
       - task: CopyFiles@2
         displayName: 'Copy addon files for repository'
         inputs:
-          SourceFolder: '$(build.artifactstagingdirectory)/scriptakl.retroarchlauncher/'
+          SourceFolder: '$(build.artifactstagingdirectory)/$(addonName)/'
           Contents: |
               addon.xml
-              media/**/*.*
+              media/*.*
           TargetFolder: '$(build.artifactstagingdirectory)/package/'
           CleanTargetFolder: false
           flattenFolders: false
           OverWrite: true
 
-      - script: md5sum scriptakl.retroarchlauncher-$(packageVersion).zip > scriptakl.retroarchlauncher-$(packageVersion).zip.md5
+      - script: md5sum $(addonName)-$(packageVersion).zip > $(addonName)-$(packageVersion).zip.md5
         workingDirectory: $(build.artifactstagingdirectory)/package/
         displayName: 'Creating md5 file for zipfile'
 
@@ -114,12 +141,12 @@ stages:
         displayName: 'Publishing application as artifact'
         inputs:
           PathtoPublish: '$(build.artifactstagingdirectory)/package/'
-          ArtifactName: 'scriptakl.retroarchlauncher'
+          ArtifactName: '$(addonName)'
           publishLocation: 'Container'
-     
+
 - stage: DeployStaging
   displayName: Deployment on Staging
-  condition: or(eq(${{variables.isReleaseCandidate}}, true),eq(${{variables.isHotfix}}, true),eq(${{variables.isMaster}}, true))
+  condition: and(succeeded(), or(eq(${{variables.isReleaseCandidate}}, true),eq(${{variables.isHotfix}}, true),eq(${{variables.isMaster}}, true)))
   jobs:
     - deployment: Staging
       environment: 
@@ -139,9 +166,8 @@ stages:
           deploy:
             steps:
             - download: current
-              displayName: 'Downloading Application artifact'
-              artifact: 'scriptakl.retroarchlauncher'
-
+              displayName: 'Downloading addon artifact'
+                
             - script: |
                 git clone https://$(repository_url)
               workingDirectory: $(Pipeline.Workspace)/
@@ -156,9 +182,9 @@ stages:
             - task: CopyFiles@2
               displayName: 'Copy addon into git repository'
               inputs:
-                SourceFolder: '$(Pipeline.Workspace)/scriptakl.retroarchlauncher'
+                SourceFolder: '$(Pipeline.Workspace)/$(addonName)'
                 Contents: '**/*.*'
-                TargetFolder: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/scriptakl.retroarchlauncher'
+                TargetFolder: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)'
                 CleanTargetFolder: false
                 flattenFolders: false
                 OverWrite: true
@@ -167,19 +193,20 @@ stages:
               displayName: 'Merge addon xml files for repository'
               inputs:
                 scriptSource: 'inline'
-                arguments: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/addons.xml $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/scriptakl.retroarchlauncher/addon.xml'
+                arguments: '$(addonName) $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/addons.xml $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)/addon.xml'
                 script: |
                   import sys
                   from xml.etree import ElementTree
 
-                  file_combined = sys.argv[1]
-                  file_source = sys.argv[2]
+                  addon_name = sys.argv[1]
+                  file_combined = sys.argv[2]
+                  file_source = sys.argv[3]
 
                   addons_xml    = ElementTree.parse(file_combined)
                   addons        = addons_xml.getroot()
                   addon_in      = ElementTree.parse(file_source).getroot()
 
-                  nodes = addons.findall("addon[@id='scriptakl.retroarchlauncher']")
+                  nodes = addons.findall(f"addon[@id='{addon_name}']")
 
                   for addon_node in nodes:
                       addons.remove(addon_node)
@@ -205,7 +232,7 @@ stages:
 
 - stage: DeployProd
   displayName: Deployment on Production
-  condition: eq(${{variables.isMaster}}, true)
+  condition: and(succeeded(), eq(${{variables.isMaster}}, true))
   jobs:
     - deployment: Production
       environment: 
@@ -225,9 +252,8 @@ stages:
           deploy:
             steps:
             - download: current
-              displayName: 'Downloading Application artifact'
-              artifact: 'scriptakl.retroarchlauncher'
-
+              displayName: 'Downloading addon artifact'
+                
             - script: |
                 git clone https://$(repository_url)
               workingDirectory: $(Pipeline.Workspace)/
@@ -242,9 +268,9 @@ stages:
             - task: CopyFiles@2
               displayName: 'Copy addon into git repository'
               inputs:
-                SourceFolder: '$(Pipeline.Workspace)/scriptakl.retroarchlauncher'
+                SourceFolder: '$(Pipeline.Workspace)/$(addonName)'
                 Contents: '**/*.*'
-                TargetFolder: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/scriptakl.retroarchlauncher'
+                TargetFolder: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)'
                 CleanTargetFolder: false
                 flattenFolders: false
                 OverWrite: true
@@ -253,19 +279,20 @@ stages:
               displayName: 'Merge addon xml files for repository'
               inputs:
                 scriptSource: 'inline'
-                arguments: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/addons.xml $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/scriptakl.retroarchlauncher/addon.xml'
+                arguments: '$(addonName) $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/addons.xml $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)/addon.xml'
                 script: |
                   import sys
                   from xml.etree import ElementTree
 
-                  file_combined = sys.argv[1]
-                  file_source = sys.argv[2]
+                  addon_name = sys.argv[1]
+                  file_combined = sys.argv[2]
+                  file_source = sys.argv[3]
 
                   addons_xml    = ElementTree.parse(file_combined)
                   addons        = addons_xml.getroot()
                   addon_in      = ElementTree.parse(file_source).getroot()
 
-                  nodes = addons.findall("addon[@id='scriptakl.retroarchlauncher']")
+                  nodes = addons.findall(f"addon[@id='{addon_name}']")
 
                   for addon_node in nodes:
                       addons.remove(addon_node)

@@ -192,8 +192,12 @@ class RetroarchLauncher(LauncherABC):
                 logger.debug("get_available_retroarch_cores() using core '{0}'".format(core_file.getPath()))
                 
             core_info = info_file.readPropertyFile()
-            cores[info_file.getPath()] = core_info['display_name']
-
+            if 'display_name' in core_info:
+                cores[info_file.getPath()] = core_info['display_name']
+            else:
+                logger.warning(f'Cannot read display name for core {info_file.getBaseNoExt()}')
+                cores[info_file.getPath()] = info_file.getBaseNoExt()
+                
         cores_sorted['BROWSE'] = 'Manual enter path to core'        
         for core_item in sorted(cores.items(), key=lambda x: x[1]):
             cores_sorted[core_item[0]] = core_item[1]
@@ -221,7 +225,7 @@ class RetroarchLauncher(LauncherABC):
         
         core_file = self._switch_info_to_core_file(info_file, cores_folder, cores_ext)
         core_info = info_file.readPropertyFile()
-
+        
         launchers_settings[item_key]      = info_file.getPath()
         launchers_settings['retro_core']  = core_file.getPath()
                 
@@ -244,10 +248,10 @@ class RetroarchLauncher(LauncherABC):
         
     def _builder_get_edit_options(self) -> dict:
         options = collections.OrderedDict()
-        options[self._change_retroarch_path]    = 'Change Retroarch path ({})'.format(self.launcher_settings['application'])
-        options[self._change_config]            = "Change config: '{0}'".format(self.launcher_settings['retro_config'])
-        options[self._change_core]              = "Change core: '{0}'".format(self.launcher_settings['retro_core'])
-        options[self._change_launcher_arguments]= "Modify Arguments: '{0}'".format(self.launcher_settings['args'])
+        options[self._change_retroarch_path]    = f"Change Retroarch path ({self.launcher_settings['application']})"
+        options[self._change_config]            = f"Change config: '{self.launcher_settings['retro_config']}'"
+        options[self._change_core]              = f"Change core: '{self.launcher_settings['retro_core']}'"
+        options[self._change_launcher_arguments]= f"Modify Arguments: '{self.launcher_settings['args']}'"
         return options
     
     def _change_retroarch_path(self):
@@ -270,7 +274,7 @@ class RetroarchLauncher(LauncherABC):
             logger.debug('_change_config(): Selected option = NONE')
             return
                 
-        logger.debug('_change_config(): Selected option = {0}'.format(selected_option))
+        logger.debug(f'_change_config(): Selected option = {selected_option}')
         self.launcher_settings['retro_config'] = selected_option
 
     def _change_core(self):
@@ -283,8 +287,8 @@ class RetroarchLauncher(LauncherABC):
             logger.debug('_change_core(): Selected option = NONE')
             return
                 
-        logger.debug('_change_core(): Selected option = {0}'.format(selected_option))
-        self._builder_load_selected_core_info(selected_option, 'retro_core_info', self.launcher_settings, True)
+        logger.debug(f'_change_core(): Selected option = {selected_option}')
+        self._builder_load_selected_core_info(selected_option, 'retro_core_info', self.launcher_settings)
             
     def _change_launcher_arguments(self):
         args = self.launcher_settings['args']
@@ -324,8 +328,8 @@ class RetroarchLauncher(LauncherABC):
 
             arguments += '-n {}/com.retroarch.browser.retroactivity.RetroActivityFuture '.format(android_app)
             arguments += '-e ROM \'$rom$\' '
-            arguments += '-e LIBRETRO {} '.format(self.launcher_settings['retro_core'])
-            arguments += '-e CONFIGFILE {}'.format(self.launcher_settings['retro_config'])
+            arguments += f"-e LIBRETRO {self.launcher_settings['retro_core']} "
+            arguments += f"-e CONFIGFILE {self.launcher_settings['retro_config']}"
             
         original_arguments = self.launcher_settings['args'] if 'args' in self.launcher_settings else ''
         self.launcher_settings['args'] = '{} {}'.format(arguments, original_arguments)
