@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <settings version="1">
-    <section id="script.ael.retroarchlauncher">
-        <category id="ael_retroarch_paths" label="30010" help="">
+    <section id="script.akl.retroarchlauncher">
+        <category id="akl_retroarch_paths" label="30010" help="">
 			<group id="1">
                 <setting id="retroarch_exec_path" type="path" label="30101" help="">
 					<default/>
@@ -46,7 +46,7 @@
                 </setting>
             </group>
         </category>
-        <category id="ael_retroarch_advanced" label="30011">
+        <category id="akl_retroarch_advanced" label="30011">
 			<group id="1">
                 <setting id="media_state_action" type="integer" label="30121" help="">
                     <level>0</level>
@@ -116,16 +116,16 @@
                     </constraints>
                     <control type="spinner" format="string"/>
                 </setting>
-                <setting id="ael.enabled" type="boolean" label="Enable as AEL plugin" help="">
+                <setting id="akl.enabled" type="boolean" label="Enable as AKL plugin" help="">
                     <level>4</level>
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="ael.plugin_types" type="string" label="AEL plugin type(s)" help="">
+                <setting id="akl.plugin_types" type="string" label="AKL plugin type(s)" help="">
                     <level>4</level>
                     <default>LAUNCHER</default>
                 </setting>
-                <setting id="ael.launcher.friendlyname" type="string" label="Launcher friendlyname" help="">
+                <setting id="akl.launcher.friendlyname" type="string" label="Launcher friendlyname" help="">
                     <level>4</level>
                     <default>Retroarch</default>
                 </setting>

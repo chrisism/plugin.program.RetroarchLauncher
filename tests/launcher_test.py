@@ -11,35 +11,20 @@ logger = logging.getLogger(__name__)
 from fakes import FakeFile, FakeExecutor, random_string
 
 from resources.lib.launcher import RetroarchLauncher
-from ael.launchers import ExecutionSettings
-from ael.api import ROMObj
-from ael.utils import io
+from akl.launchers import ExecutionSettings
+from akl.api import ROMObj
+from akl.utils import io
 
 class Test_Launcher(unittest.TestCase):
-    
-    ROOT_DIR = ''
-    TEST_DIR = ''
-    TEST_ASSETS_DIR = ''
-
-    @classmethod
-    def setUpClass(cls):        
-        cls.TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-        cls.ROOT_DIR = os.path.abspath(os.path.join(cls.TEST_DIR, os.pardir))
-        cls.TEST_ASSETS_DIR = os.path.abspath(os.path.join(cls.TEST_DIR,'assets/'))
-                
-        logger.info('ROOT DIR: {}'.format(cls.ROOT_DIR))
-        logger.info('TEST DIR: {}'.format(cls.TEST_DIR))
-        logger.info('TEST ASSETS DIR: {}'.format(cls.TEST_ASSETS_DIR))
-        logger.info('---------------------------------------------------------------------------')
     
     @patch('resources.lib.launcher.io.is_windows')
     @patch('resources.lib.launcher.io.is_android')
     @patch('resources.lib.launcher.io.is_linux')    
-    @patch('ael.launchers.kodi', autospec=True)
-    @patch('ael.utils.io.FileName', side_effect = FakeFile)
-    @patch('ael.api.client_get_rom')
-    @patch('ael.api.client_get_collection_launcher_settings')
-    @patch('ael.executors.ExecutorFactory')
+    @patch('akl.launchers.kodi', autospec=True)
+    @patch('akl.utils.io.FileName', side_effect = FakeFile)
+    @patch('akl.api.client_get_rom')
+    @patch('akl.api.client_get_collection_launcher_settings')
+    @patch('akl.executors.ExecutorFactory')
     def test_if_retroarch_launcher_will_apply_the_correct_arguments_when_running_on_android(self, 
             factory_mock:MagicMock, api_settings_mock:MagicMock, api_rom_mock: MagicMock, filename_mock, kodi_mock,
             is_linux_mock:MagicMock,is_android_mock:MagicMock, is_win_mock:MagicMock):
@@ -85,12 +70,12 @@ class Test_Launcher(unittest.TestCase):
         # assert
         actual = mock.actualApplication
         actualArgs = mock.actualArgs
-        self.assertEqual(expected, actual)
+        assert actual == expected
         self.assertEqual(expectedArgs, actualArgs)
         
 
     @patch('resources.lib.launcher.io.is_android')
-    @patch('ael.api.client_get_collection_launcher_settings')
+    @patch('akl.api.client_get_collection_launcher_settings')
     def test_retroarchlauncher_switching_core_to_info_file(self, api_settings_mock:MagicMock, is_android_mock:MagicMock):
         # arrange
         is_android_mock.return_value = True
@@ -117,7 +102,7 @@ class Test_Launcher(unittest.TestCase):
         # assert
         logger.debug(actual.path_tr)
         self.assertIsNotNone(actual)
-        self.assertEquals(u'/data/user/0/infos/mycore_libretro.info', actual.path_tr)
+        self.assertEqual(u'/data/user/0/infos/mycore_libretro.info', actual.path_tr)
 
 if __name__ == '__main__':
    unittest.main()

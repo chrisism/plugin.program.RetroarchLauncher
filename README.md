@@ -1,19 +1,25 @@
-# script.ael.retroarchlauncher
-Retroarch Launcher for AEL
 
 # Retroarch Launcher
+## script.akl.retroarchlauncher
+| Release | Status |
+|----|----|
+| Stable | [![Build Status](https://dev.azure.com/jnpro/AKL/_apis/build/status/script.akl.retroarchlauncher?branchName=main)](https://dev.azure.com/jnpro/AKL/_build/latest?definitionId=7&branchName=main)|
+| Beta | [![Build Status](https://dev.azure.com/jnpro/AKL/_apis/build/status/script.akl.retroarchlauncher?branchName=release/1.0.0)](https://dev.azure.com/jnpro/AKL/_build/latest?definitionId=7&branchName=release/1.0.0) |
+| Unstable | [![Build Status](https://dev.azure.com/jnpro/AKL/_apis/build/status/script.akl.retroarchlauncher?branchName=dev)](https://dev.azure.com/jnpro/AKL/_build/latest?definitionId=7&branchName=dev) |
+
+Retroarch Launcher for AKL
 
 The Retroarch launcher depends on an Retroarch instance to be able to launch the scanned ROM files.
 Get your copy from the [Retroarch website](http://www.retroarch.com/).
 
 ## Creating a Retroarch Launcher
 
-When you create a Retroarch launcher AEL will try to find all Retroarch configuration files available
+When you create a Retroarch launcher AKL will try to find all Retroarch configuration files available
 in the application folder. Either select one of the found configuration files or specify the path to
-the configuration file manually. Once given AEL will automatically load the configuration file and
+the configuration file manually. Once given AKL will automatically load the configuration file and
 use the configured cores and infos folder to present the list of available cores.
 
-When you select the desired core AEL will also apply the default ROM extensions of the core and use
+When you select the desired core AKL will also apply the default ROM extensions of the core and use
 the systemname and manufactorer as default information for the launcher. All of this you can change
 in the following steps after selecting the core.
 
@@ -29,3 +35,14 @@ The default paths for Retroarch cores and info files under Android are only scan
 is rooted. When running on a non-rooted Android box the best option is to open up Retroarch and
 configure paths for the cores and infos that are actually accessible. 
 Don't forget to update/download the cores and info file after changing the paths.
+
+### Kodi forum thread ###
+
+More information and discussion about AKL can be found in the [Advanced Kodi Launcher thread] 
+in the Kodi forum.
+
+[Advanced Kodi Launcher thread]: https://forum.kodi.tv/showthread.php?tid=366351
+
+### Documentation ###
+
+Read more about AKL on the main plugin's [ReadMe](https://github.com/chrisism/plugin.program.akl/blob/master/README.md) page.
