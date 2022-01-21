@@ -22,6 +22,7 @@ trigger:
 - main
 - release/*
 - dev
+- hotfix/*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -153,6 +154,7 @@ stages:
       - task: GithubRelease@1 
         displayName: 'Create GitHub Release'
         condition: and(succeeded(), eq(${{variables.isMaster}}, true))
+        continueOnError: true
         inputs:
           gitHubConnection: 'github.com_chrisism'
           repositoryName: chrisism/$(addonName)
