@@ -85,7 +85,7 @@ class Test_Launcher(unittest.TestCase):
         # assert
         actual = mock.actualApplication
         actualArgs = mock.actualArgs
-        self.assertEqual(expected, actual)
+        assert actual == expected
         self.assertEqual(expectedArgs, actualArgs)
         
 
@@ -117,7 +117,7 @@ class Test_Launcher(unittest.TestCase):
         # assert
         logger.debug(actual.path_tr)
         self.assertIsNotNone(actual)
-        self.assertEquals(u'/data/user/0/infos/mycore_libretro.info', actual.path_tr)
+        self.assertEqual(u'/data/user/0/infos/mycore_libretro.info', actual.path_tr)
 
 if __name__ == '__main__':
    unittest.main()
