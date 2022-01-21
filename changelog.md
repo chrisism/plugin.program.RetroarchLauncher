@@ -1,0 +1,1 @@
+First official release of the Retroarchlauncher plugin for AKL.
