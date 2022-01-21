@@ -1,2 +1,2 @@
 [B]v1.0.0[/B]
- - Initial release of AKL plugin
+ - First official release of the Retroarchlauncher plugin for AKL.

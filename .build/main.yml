@@ -1,4 +1,3 @@
-
 # Azure Devops Pipeline definition
 # 
 # Will build and release packages on Gitflow branch triggers (main, release/*).
@@ -22,6 +21,7 @@
 trigger:
 - main
 - release/*
+- dev
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -31,8 +31,9 @@ variables:
   isReleaseCandidate: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')}}
   isHotfix: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')}}
   isDev: ${{eq(variables['Build.SourceBranch'], 'refs/heads/dev')}}
+  isPR: ${{startsWith(variables['Build.SourceBranch'], 'refs/pull/')}}
+  addonName: script.akl.retroarchplayer
   workingDirectory: '$(Build.SourcesDirectory)'
-  addonName: script.akl.retroarchlauncher
 
 stages:
 - stage: Build
@@ -51,48 +52,43 @@ stages:
         displayName: 'Executing gitversion'
 
       - script: |
-            echo '##vso[task.setvariable variable=packageVersion]$(GitVersion.LegacySemVer)
-            echo '##vso[task.setvariable variable=projectVersion]$(GitVersion.Major).$(GitVersion.Minor).$(GitVersion.Patch)
+            echo '##vso[task.setvariable variable=addonVersion]$(GitVersion.Major).$(GitVersion.Minor).$(GitVersion.Patch)~$(GitVersion.PreReleaseLabel)$(GitVersion.PreReleaseNumber)'
         displayName: 'Setting version variables'
         condition: not(eq(${{variables.isMaster}}, true))
         
       - script: |
-            echo '##vso[task.setvariable variable=packageVersion]$(GitVersion.Major).$(GitVersion.Minor).$(GitVersion.Patch)
-            echo '##vso[task.setvariable variable=projectVersion]$(GitVersion.Major).$(GitVersion.Minor).$(GitVersion.Patch)
+            echo '##vso[task.setvariable variable=addonVersion]$(GitVersion.Major).$(GitVersion.Minor).$(GitVersion.Patch)'
         displayName: 'Setting version variables'
         condition: eq(${{variables.isMaster}}, true)
+
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.x'
+
+      - task: PipAuthenticate@0
+        displayName: Authenticate with artifact feed
+        inputs:
+          artifactFeeds: AKL/akl_libs
+
+      - bash: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        displayName: pip install 
 
       - task: RegExMatchReplace@2
         displayName: 'Set addon version'
         inputs:
           PathToFile: 'addon.xml'
           RegEx: 'version="\d+\.\d+\.\d+.*" provider'
-          ValueToReplace: 'version="$(packageVersion)" provider'
-    
-      - task: PythonScript@0
+          ValueToReplace: 'version="$(addonVersion)" provider'
+
+      - bash: update_addon_news $(workingDirectory)/addon.xml $(workingDirectory)/changelog.txt
         displayName: 'Add changelog in addon.xml'
-        inputs:
-          scriptSource: 'inline'
-          arguments: '$(workingDirectory)/addon.xml $(workingDirectory)/changelog.txt'
-          script: |
-            import sys, os, re
+        workingDirectory: '$(workingDirectory)'
 
-            addon_file = sys.argv[1]
-            changelog_file = sys.argv[2]
-            addon_xml = '' 
-            changelog_txt = ''
-            
-            with open(addon_file, 'r') as f:
-              addon_xml = f.read()
-            with open(changelog_file, 'r') as f:
-              changelog_txt = f.read()
-
-            changelog_txt = changelog_txt.replace('\n', '[CR]')
-            addon_xml = re.sub(r'<news>(.*)?</news>', f'<news>{changelog_txt}</news>', addon_xml)
-            with open(addon_file, 'w') as f:
-              f.write(addon_xml)
-          workingDirectory: '$(workingDirectory)'
-          
+      - bash: 'python -m pytest --junitxml=$(build.artifactstagingdirectory)/$(addonName)_$(addonVersion)_testresults.xml' 
+        workingDirectory: '$(workingDirectory)'
+        displayName: 'Run tests'
+              
       - task: CopyFiles@2
         displayName: 'Copy addon files for package'
         inputs:
@@ -104,6 +100,9 @@ stages:
               *.txt
               resources/**/*.*
               media/**/*.*
+              !requirements.txt
+              !**/*.pyc
+              !**/__pycache__/**/*.*
           TargetFolder: '$(build.artifactstagingdirectory)/$(addonName)/'
           CleanTargetFolder: true
           flattenFolders: false
@@ -114,7 +113,7 @@ stages:
           rootFolderOrFile: '$(build.artifactstagingdirectory)/$(addonName)'
           includeRootFolder: true
           archiveType: 'zip'
-          archiveFile: '$(build.artifactstagingdirectory)/package/$(addonName)-$(packageVersion).zip'
+          archiveFile: '$(build.artifactstagingdirectory)/package/$(addonName)-$(addonVersion).zip'
           replaceExistingArchive: true
  
       - task: CopyFiles@2
@@ -129,7 +128,7 @@ stages:
           flattenFolders: false
           OverWrite: true
 
-      - script: md5sum $(addonName)-$(packageVersion).zip > $(addonName)-$(packageVersion).zip.md5
+      - script: md5sum $(addonName)-$(addonVersion).zip > $(addonName)-$(addonVersion).zip.md5
         workingDirectory: $(build.artifactstagingdirectory)/package/
         displayName: 'Creating md5 file for zipfile'
 
@@ -143,6 +142,31 @@ stages:
           PathtoPublish: '$(build.artifactstagingdirectory)/package/'
           ArtifactName: '$(addonName)'
           publishLocation: 'Container'
+          
+      - task: PublishTestResults@2
+        displayName: 'Publish test result'
+        inputs:
+          testResultsFiles: '$(build.artifactstagingdirectory)/$(addonName)_$(addonVersion)_testresults.xml'
+          testRunTitle: $(addonName)_$(addonVersion)
+        condition: succeededOrFailed()
+
+      - task: GithubRelease@1 
+        displayName: 'Create GitHub Release'
+        condition: and(succeeded(), eq(${{variables.isMaster}}, true))
+        inputs:
+          gitHubConnection: 'github.com_chrisism'
+          repositoryName: chrisism/$(addonName)
+          action: 'create'
+          target: '$(Build.SourceVersion)'
+          tagSource: 'userSpecifiedTag'
+          tag: $(addonVersion)
+          title: $(Build.BuildNumber)
+          releaseNotesSource: filePath
+          releaseNotesFilePath: $(workingDirectory)/changelog.md  
+          addChangeLog: true
+          assets: |
+            $(build.artifactstagingdirectory)/package/*.*
+            $(workingDirectory)/changelog.txt
 
 - stage: DeployStaging
   displayName: Deployment on Staging
@@ -160,75 +184,14 @@ stages:
           value: repository.chrisism.dev
         - name: repository_data_dir
           value: 'matrix'
+        - name: branch_name
+          value: main
 
       strategy:     
         runOnce:
           deploy:
             steps:
-            - download: current
-              displayName: 'Downloading addon artifact'
-                
-            - script: |
-                git clone https://$(repository_url)
-              workingDirectory: $(Pipeline.Workspace)/
-              displayName: 'Clone git repository'
-
-            - script: |
-                git config user.email $(git_emailAddress)
-                git config user.name $(git_userName)
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)
-              displayName: 'Configure git settings'
-
-            - task: CopyFiles@2
-              displayName: 'Copy addon into git repository'
-              inputs:
-                SourceFolder: '$(Pipeline.Workspace)/$(addonName)'
-                Contents: '**/*.*'
-                TargetFolder: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)'
-                CleanTargetFolder: false
-                flattenFolders: false
-                OverWrite: true
-
-            - task: PythonScript@0
-              displayName: 'Merge addon xml files for repository'
-              inputs:
-                scriptSource: 'inline'
-                arguments: '$(addonName) $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/addons.xml $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)/addon.xml'
-                script: |
-                  import sys
-                  from xml.etree import ElementTree
-
-                  addon_name = sys.argv[1]
-                  file_combined = sys.argv[2]
-                  file_source = sys.argv[3]
-
-                  addons_xml    = ElementTree.parse(file_combined)
-                  addons        = addons_xml.getroot()
-                  addon_in      = ElementTree.parse(file_source).getroot()
-
-                  nodes = addons.findall(f"addon[@id='{addon_name}']")
-
-                  for addon_node in nodes:
-                      addons.remove(addon_node)
-
-                  addons.append(addon_in)
-                  addons_xml.write(file_combined)
-                workingDirectory: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/'
-                
-            - script: md5sum addons.xml > addons.xml.md5
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/
-              displayName: 'Creating md5 file for addons.xml'
-
-            - script: |
-                git add .
-                git commit -m "$(Build.DefinitionName) Release $(Build.BuildNumber)"
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)/
-              displayName: 'Git - Add and commit'    
-
-            - script: |
-                git push https://$(github_token)@$(repository_url) main 
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)/
-              displayName: 'Git - Push'    
+              - template: publish_in_repository_steps.yml
 
 - stage: DeployProd
   displayName: Deployment on Production
@@ -246,72 +209,11 @@ stages:
           value: repository.chrisism
         - name: repository_data_dir
           value: 'matrix'
+        - name: branch_name
+          value: master
 
       strategy:     
         runOnce:
           deploy:
             steps:
-            - download: current
-              displayName: 'Downloading addon artifact'
-                
-            - script: |
-                git clone https://$(repository_url)
-              workingDirectory: $(Pipeline.Workspace)/
-              displayName: 'Clone git repository'
-
-            - script: |
-                git config user.email $(git_emailAddress)
-                git config user.name $(git_userName)
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)
-              displayName: 'Configure git settings'
-
-            - task: CopyFiles@2
-              displayName: 'Copy addon into git repository'
-              inputs:
-                SourceFolder: '$(Pipeline.Workspace)/$(addonName)'
-                Contents: '**/*.*'
-                TargetFolder: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)'
-                CleanTargetFolder: false
-                flattenFolders: false
-                OverWrite: true
-
-            - task: PythonScript@0
-              displayName: 'Merge addon xml files for repository'
-              inputs:
-                scriptSource: 'inline'
-                arguments: '$(addonName) $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/addons.xml $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/$(addonName)/addon.xml'
-                script: |
-                  import sys
-                  from xml.etree import ElementTree
-
-                  addon_name = sys.argv[1]
-                  file_combined = sys.argv[2]
-                  file_source = sys.argv[3]
-
-                  addons_xml    = ElementTree.parse(file_combined)
-                  addons        = addons_xml.getroot()
-                  addon_in      = ElementTree.parse(file_source).getroot()
-
-                  nodes = addons.findall(f"addon[@id='{addon_name}']")
-
-                  for addon_node in nodes:
-                      addons.remove(addon_node)
-
-                  addons.append(addon_in)
-                  addons_xml.write(file_combined)
-                workingDirectory: '$(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/'
-                
-            - script: md5sum addons.xml > addons.xml.md5
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)/$(repository_data_dir)/
-              displayName: 'Creating md5 file for addons.xml'
-
-            - script: |
-                git add .
-                git commit -m "$(Build.DefinitionName) Release $(Build.BuildNumber)"
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)/
-              displayName: 'Git - Add and commit'    
-
-            - script: |
-                git push https://$(github_token)@$(repository_url) main 
-              workingDirectory: $(Pipeline.Workspace)/$(repository_name)/
-              displayName: 'Git - Push'    
+              - template: publish_in_repository_steps.yml
