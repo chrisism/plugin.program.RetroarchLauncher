@@ -33,7 +33,7 @@ variables:
   isHotfix: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')}}
   isDev: ${{eq(variables['Build.SourceBranch'], 'refs/heads/dev')}}
   isPR: ${{startsWith(variables['Build.SourceBranch'], 'refs/pull/')}}
-  addonName: script.akl.retroarchplayer
+  addonName: script.akl.retroarchlauncher
   workingDirectory: '$(Build.SourcesDirectory)'
 
 stages:
