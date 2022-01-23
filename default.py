@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 #
-# Retroarch Launcher plugin for AEL
+# Retroarch Launcher plugin for AKL
 #
 # --- Python standard library ---
 from __future__ import unicode_literals
@@ -14,10 +14,10 @@ import json
 # --- Kodi stuff ---
 import xbmcaddon
 
-# AEL main imports
-from ael import settings, constants
-from ael.utils import kodilogging, kodi, io
-from ael.launchers import ExecutionSettings, get_executor_factory
+# AKL main imports
+from akl import settings, constants
+from akl.utils import kodilogging, kodi, io
+from akl.launchers import ExecutionSettings, get_executor_factory
 
 from resources.lib.launcher import RetroarchLauncher
 
@@ -45,14 +45,14 @@ def run_plugin():
     if io.is_linux():   logger.info('OS               "Linux"')
     for i in range(len(sys.argv)): logger.info('sys.argv[{}] "{}"'.format(i, sys.argv[i]))
 
-    parser = argparse.ArgumentParser(prog='script.ael.retroarchlauncher')
+    parser = argparse.ArgumentParser(prog='script.akl.retroarchlauncher')
     parser.add_argument('--cmd', help="Command to execute", choices=['launch', 'scan', 'scrape', 'configure'])
     parser.add_argument('--type',help="Plugin type", choices=['LAUNCHER', 'SCANNER', 'SCRAPER'], default=constants.AddonType.LAUNCHER.name)
     parser.add_argument('--server_host', type=str, help="Host")
     parser.add_argument('--server_port', type=int, help="Port")
     parser.add_argument('--rom_id', type=str, help="ROM ID")
     parser.add_argument('--romcollection_id', type=str, help="ROM Collection ID")
-    parser.add_argument('--ael_addon_id', type=str, help="Addon configuration ID")
+    parser.add_argument('--akl_addon_id', type=str, help="Addon configuration ID")
     parser.add_argument('--settings', type=json.loads, help="Specific run setting")
     
     try:
@@ -88,11 +88,11 @@ def launch_rom(args):
         addon_dir = kodi.getAddonDir()
         report_path = addon_dir.pjoin('reports')
         if not report_path.exists(): report_path.makedirs()    
-        report_path = report_path.pjoin('{}-{}.txt'.format(args.ael_addon_id, args.rom_id))
+        report_path = report_path.pjoin('{}-{}.txt'.format(args.akl_addon_id, args.rom_id))
         
         executor_factory = get_executor_factory(report_path)
         launcher = RetroarchLauncher(
-            args.ael_addon_id, 
+            args.akl_addon_id, 
             args.romcollection_id, 
             args.rom_id, 
             args.server_host, 
@@ -111,7 +111,7 @@ def configure_launcher(args):
     logger.debug('Retroarch Launcher: Configuring ...')
     
     launcher = RetroarchLauncher(
-            args.ael_addon_id, 
+            args.akl_addon_id, 
             args.romcollection_id, 
             args.rom_id, 
             args.server_host, 
