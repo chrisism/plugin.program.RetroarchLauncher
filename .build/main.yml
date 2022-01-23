@@ -42,12 +42,12 @@ stages:
   jobs:
     - job: build
       displayName: build
+      workspace:
+        clean: all 
         
       steps:
       - task: gitversion/setup@0
         displayName: 'Install GitTools'
-        inputs:
-          versionSpec: '5.3.x'
 
       - task: gitversion/execute@0
         displayName: 'Executing gitversion'
