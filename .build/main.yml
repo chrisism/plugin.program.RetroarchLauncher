@@ -48,6 +48,8 @@ stages:
       steps:
       - task: gitversion/setup@0
         displayName: 'Install GitTools'
+        inputs:
+          versionSpec: '5.x'
 
       - task: gitversion/execute@0
         displayName: 'Executing gitversion'
