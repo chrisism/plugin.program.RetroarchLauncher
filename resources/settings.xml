@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <settings version="1">
     <section id="script.akl.retroarchlauncher">
         <category id="akl_retroarch_paths" label="30010" help="">
@@ -78,6 +78,11 @@
                     <control type="toggle"/>
                 </setting>
                 <setting id="suspend_screensaver" type="boolean" label="30124" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="suspend_joystick" type="boolean" label="30130" help="">
                     <level>0</level>
                     <default>false</default>
                     <control type="toggle"/>

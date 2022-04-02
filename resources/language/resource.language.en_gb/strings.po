@@ -70,6 +70,10 @@ msgctxt "#30129"
 msgid "Log level"
 msgstr "settings.xml"
 
+msgctxt "#30130"
+msgid "Suspend/resume Kodi joystick engine"
+msgstr "settings.xml"
+
 ############################
 # Enum values
 ############################
