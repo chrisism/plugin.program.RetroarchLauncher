@@ -53,9 +53,10 @@ The Retroarch plugin experience can be optimized using the addon settings. Depen
 | --- | --- | --- |
 | Paths | Retroarch application path | Default path to the Retroarch executable. |
 | Advanced | Action on Kodi playing media | Indicate what AKL needs to do with Kodi when the addon wants to launch a ROM and media is currently playing. Default action is to stop the media. |
+| Advanced | After/before launch delay (ms) | Amount of milliseconds to wait before executing/launching the ROM. |
 | Advanced | Suspend/resume Kodi audio engine | Will suspend the Kodi audio engine (like menu sounds) while the ROM is launched. |
 | Advanced | Suspend/resume Kodi screensaver | Temporary disables the screensaver in Kodi while launching the ROM. |
-| Advabced | Suspend/resume Kodi joystick engine | Temporary disables the joystick engine in Kodi while launching the ROM so that it will not intervene with running the ROM. |
+| Advanced | Suspend/resume Kodi joystick engine | Temporary disables the joystick engine in Kodi while launching the ROM so that it will not intervene with running the ROM. |
 | Advanced | Escape $rom$ quotes | Will escape the ' (quotes) symbols in the ROM file path. This can mess up execution arguments. | 
 | Advanced | Disable LIRC | Applicable on Linux only. Will disable the LIRC (infrared connector) in Kodi so it will not interact with the launched ROM. |
 | Advanced | Close file descriptor | Windows only. Closes the file descriptor. Use in case processes get locked. | 
