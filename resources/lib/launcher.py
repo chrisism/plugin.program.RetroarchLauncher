@@ -89,12 +89,12 @@ class RetroarchLauncher(LauncherABC):
 
     def _builder_get_retroarch_app_folder(self):
 
-        retroarch_dir = settings.getSetting('retroarch_system_dir')
+        retroarch_dir = settings.getSetting('retroarch_exec_path')
         if retroarch_dir != '':        
             # --- All platforms except Android ---
             retroarch_folder = io.FileName(retroarch_dir, isdir = True)
             if retroarch_folder.exists():
-                logger.debug('Preset Retroarch directory: {}'.format(retroarch_folder.getPath()))
+                logger.debug(f"Preset Retroarch directory: {retroarch_folder.getPath()}")
                 return retroarch_folder.getPath()
 
         if io.is_android():

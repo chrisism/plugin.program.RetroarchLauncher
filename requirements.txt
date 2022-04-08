@@ -1,4 +1,5 @@
-kodi.tools==1.0.0
+kodi.tools==1.1.0
 Kodistubs==19.0.3
 pytest==6.2.5
-script.module.akl==1.0.3
+script.module.akl==1.0.5
+requests==2.22.0
