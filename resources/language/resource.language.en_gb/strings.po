@@ -23,15 +23,11 @@ msgstr "settings.xml"
 # Settings options
 ############################
 msgctxt "#30101"
-msgid "Retroarch executable"
+msgid "Retroarch application path"
 msgstr "settings.xml"
 
 msgctxt "#30102"
-msgid "Retroarch cores directory"
-msgstr "settings.xml"
-
-msgctxt "#30103"
-msgid "Retroarch system directory"
+msgid "The default path to the Retroarch executable/application."
 msgstr "settings.xml"
 
 msgctxt "#30121"
@@ -72,6 +68,49 @@ msgstr "settings.xml"
 
 msgctxt "#30130"
 msgid "Suspend/resume Kodi joystick engine"
+msgstr "settings.xml"
+
+############################
+# Help texts
+############################
+msgctxt "#30221"
+msgid "Indicate what AKL needs to do with Kodi when the addon wants to launch a ROM and media is currently playing. Default action is to stop the media."
+msgstr "settings.xml"
+
+msgctxt "#30222"
+msgid "After/before launch delay (ms)"
+msgstr "settings.xml"
+
+msgctxt "#30223"
+msgid "Will suspend the Kodi audio engine (like menu sounds) while the ROM is launched."
+msgstr "settings.xml"
+
+msgctxt "#30224"
+msgid "Suspend/resume Kodi screensaver | Temporary disables the screensaver in Kodi while launching the ROM."
+msgstr "settings.xml"
+
+msgctxt "#30225"
+msgid "Will escape the ' (quotes) symbols in the ROM file path. This can mess up execution arguments."
+msgstr "settings.xml"
+
+msgctxt "#30226"
+msgid "Applicable on Linux only. Will disable the LIRC (infrared connector) in Kodi so it will not interact with the launched ROM."
+msgstr "settings.xml"
+
+msgctxt "#30227"
+msgid "Windows only. Closes the file descriptor. Use in case processes get locked."
+msgstr "settings.xml"
+
+msgctxt "#30228"
+msgid "Windows only. Will execute the application with the application directory as the current working/active directory."
+msgstr "settings.xml"
+
+msgctxt "#30229"
+msgid "Verbosity level of logging."
+msgstr "settings.xml"
+
+msgctxt "#30230"
+msgid "Temporary disables the joystick engine in Kodi while launching the ROM so that it will not intervene with running the ROM."
 msgstr "settings.xml"
 
 ############################
