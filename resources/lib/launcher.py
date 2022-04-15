@@ -313,27 +313,28 @@ class RetroarchLauncher(LauncherABC):
         # TODO other os
         return application
 
-    def get_arguments(self) -> str:
-        arguments = ''
+    def get_arguments(self, *args) -> list:
+        arguments = list(args)
         if io.is_windows() or io.is_linux():
-            arguments =  '-L "{}" '.format(self.launcher_settings['retro_core'])
-            arguments += '-c "{}" '.format(self.launcher_settings['retro_config'])
-            arguments += '"$rom$"'
+            arguments.append(f'-L "{self.launcher_settings["retro_core"]}"')
+            arguments.append(f'-c "{self.launcher_settings["retro_config"]}"')
+            arguments.append('"$rom$"')
             
         if io.is_android():
             android_app_path = self.launcher_settings['application']
             android_app = next(s for s in reversed(android_app_path.split('/')) if s)
 
-            arguments =  'start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER '
+            arguments.append('start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
 
-            arguments += '-n {}/com.retroarch.browser.retroactivity.RetroActivityFuture '.format(android_app)
-            arguments += '-e ROM \'$rom$\' '
-            arguments += f"-e LIBRETRO {self.launcher_settings['retro_core']} "
-            arguments += f"-e CONFIGFILE {self.launcher_settings['retro_config']}"
+            arguments.append(f'-n {android_app}/com.retroarch.browser.retroactivity.RetroActivityFuture')
+            arguments.append('-e ROM \'$rom$\'')
+            arguments.append(f"-e LIBRETRO {self.launcher_settings['retro_core']}")
+            arguments.append(f"-e CONFIGFILE {self.launcher_settings['retro_config']}")
             
-        original_arguments = self.launcher_settings['args'] if 'args' in self.launcher_settings else ''
-        self.launcher_settings['args'] = '{} {}'.format(arguments, original_arguments)
-        return super(RetroarchLauncher, self).get_arguments()
+        return super().get_arguments(*args)
+
+    def get_keyworded_arguments(self, **kwargs) -> dict:
+        return super().get_keyworded_arguments(**kwargs)
     
     # ---------------------------------------------------------------------------------------------
     # Misc methods
