@@ -331,7 +331,7 @@ class RetroarchLauncher(LauncherABC):
             arguments.append(f"-e LIBRETRO {self.launcher_settings['retro_core']}")
             arguments.append(f"-e CONFIGFILE {self.launcher_settings['retro_config']}")
             
-        return super().get_arguments(*args)
+        return super().get_arguments(*arguments)
 
     def get_keyworded_arguments(self, **kwargs) -> dict:
         return super().get_keyworded_arguments(**kwargs)

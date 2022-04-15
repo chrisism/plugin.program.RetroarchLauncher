@@ -80,7 +80,7 @@ class FakeExecutor(ExecutorABC):
     def getActualArguments(self):
         return self.actualArgs
 
-    def execute(self, application, arguments, non_blocking):
+    def execute(self, application: str, non_blocking: bool, *args, **kwargs):
         self.actualApplication = application
-        self.actualArgs = arguments
-        pass        
+        self.actualArgs = ' '.join(list(args))
+        pass
