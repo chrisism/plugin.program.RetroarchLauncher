@@ -61,7 +61,6 @@ class RetroarchLauncher(LauncherABC):
             self._builder_get_available_retroarch_cores, self._builder_load_selected_core_info)
         wizard = kodi.WizardDialog_Keyboard(wizard, 'retro_core_info', 'Enter path to core file',
             self._builder_load_selected_core_info, self._builder_user_selected_custom_browsing)
-        wizard = kodi.WizardDialog_Dummy(wizard, 'args', self._builder_get_default_retroarch_arguments())
         wizard = kodi.WizardDialog_Keyboard(wizard, 'args', 'Extra application arguments')
 
         return wizard
@@ -239,13 +238,6 @@ class RetroarchLauncher(LauncherABC):
         
         return input
 
-    def _builder_get_default_retroarch_arguments(self):
-        args = ''
-        if io.is_android():
-            args += '-e IME com.android.inputmethod.latin/.LatinIME -e REFRESH 60'
-
-        return args
-        
     def _builder_get_edit_options(self) -> dict:
         options = collections.OrderedDict()
         options[self._change_retroarch_path]    = f"Change Retroarch path ({self.launcher_settings['application']})"
@@ -308,12 +300,14 @@ class RetroarchLauncher(LauncherABC):
             application = app.getPath()
             
         if io.is_android():
-            application = '/system/bin/am'
+            android_app_path = self.launcher_settings['application']
+            android_app = next(s for s in reversed(android_app_path.split('/')) if s)
+            application = f"{android_app}/com.retroarch.browser.retroactivity.RetroActivityFuture"
 
         # TODO other os
         return application
 
-    def get_arguments(self, *args) -> list:
+    def get_arguments(self, *args, **kwargs) -> typing.Tuple[list, dict]:
         arguments = list(args)
         if io.is_windows() or io.is_linux():
             arguments.append(f'-L "{self.launcher_settings["retro_core"]}"')
@@ -321,20 +315,16 @@ class RetroarchLauncher(LauncherABC):
             arguments.append('"$rom$"')
             
         if io.is_android():
-            android_app_path = self.launcher_settings['application']
-            android_app = next(s for s in reversed(android_app_path.split('/')) if s)
+            kwargs["intent"]   = "android.intent.action.MAIN"
+            kwargs["category"] = "android.intent.category.LAUNCHER"
 
-            arguments.append('start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
-
-            arguments.append(f'-n {android_app}/com.retroarch.browser.retroactivity.RetroActivityFuture')
-            arguments.append('-e ROM \'$rom$\'')
-            arguments.append(f"-e LIBRETRO {self.launcher_settings['retro_core']}")
-            arguments.append(f"-e CONFIGFILE {self.launcher_settings['retro_config']}")
+            arguments.append('ROM \'$rom$\'')
+            arguments.append(f"LIBRETRO {self.launcher_settings['retro_core']}")
+            arguments.append(f"CONFIGFILE {self.launcher_settings['retro_config']}")
             
-        return super().get_arguments(*arguments)
+            # args += '-e IME com.android.inputmethod.latin/.LatinIME -e REFRESH 60'
 
-    def get_keyworded_arguments(self, **kwargs) -> dict:
-        return super().get_keyworded_arguments(**kwargs)
+        return super().get_arguments(*arguments, **kwargs)
     
     # ---------------------------------------------------------------------------------------------
     # Misc methods
