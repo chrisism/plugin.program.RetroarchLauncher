@@ -59,10 +59,17 @@ class Test_Launcher(unittest.TestCase):
         })
         api_rom_mock.return_value = rom
 
-        expected = '/system/bin/am'
-        #expectedArgs = "start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n com.retroarch/.browser.retroactivity.RetroActivityFuture -e ROM 'superrom.zip' -e LIBRETRO /data/data/com.retroarch/cores/mame_libretro_android.so -e CONFIGFILE /storage/emulated/0/Android/data/com.retroarch/files/retroarch.cfg "
-        expectedArgs = "start --user 0 -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n com.retroarch/com.retroarch.browser.retroactivity.RetroActivityFuture -e ROM 'superrom.zip' -e LIBRETRO /data/data/com.retroarch/cores/mame_libretro_android.so -e CONFIGFILE /storage/emulated/0/Android/data/com.retroarch/files/retroarch.cfg "
-                 
+        expected = 'com.retroarch/.browser.retroactivity.RetroActivityFuture'
+        expectedArgs = [
+            "ROM 'superrom.zip'",  
+            "LIBRETRO /data/data/com.retroarch/cores/mame_libretro_android.so",
+            "CONFIGFILE /storage/emulated/0/Android/data/com.retroarch/files/retroarch.cfg"
+        ]
+        expectedKwargs = {
+            "intent": "android.intent.action.MAIN",
+            "category": "android.intent.category.LAUNCHER"
+        }
+        
         # act
         target = RetroarchLauncher(launcher_id, collection_id, None, 'localhost', 8080, factory_mock, ExecutionSettings())
         target.launch()
@@ -70,8 +77,13 @@ class Test_Launcher(unittest.TestCase):
         # assert
         actual = mock.actualApplication
         actualArgs = mock.actualArgs
+        actualKwargs = mock.actualKwargs
+
         assert actual == expected
-        self.assertEqual(expectedArgs, actualArgs)
+        assert len(expectedArgs) == len(actualArgs)
+        self.assertListEqual(expectedArgs, actualArgs)
+        assert len(expectedKwargs) == len(actualKwargs)
+        self.assertDictEqual(expectedKwargs, actualKwargs)
         
 
     @patch('resources.lib.launcher.io.is_android')
