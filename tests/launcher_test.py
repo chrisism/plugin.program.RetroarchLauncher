@@ -59,7 +59,7 @@ class Test_Launcher(unittest.TestCase):
         })
         api_rom_mock.return_value = rom
 
-        expected = 'com.retroarch/com.retroarch.browser.retroactivity.RetroActivityFuture'
+        expected = 'com.retroarch/.browser.retroactivity.RetroActivityFuture'
         expectedArgs = [
             "ROM 'superrom.zip'",  
             "LIBRETRO /data/data/com.retroarch/cores/mame_libretro_android.so",

@@ -302,7 +302,7 @@ class RetroarchLauncher(LauncherABC):
         if io.is_android():
             android_app_path = self.launcher_settings['application']
             android_app = next(s for s in reversed(android_app_path.split('/')) if s)
-            application = f"{android_app}/com.retroarch.browser.retroactivity.RetroActivityFuture"
+            application = f"{android_app}/.browser.retroactivity.RetroActivityFuture"
 
         # TODO other os
         return application
@@ -318,7 +318,7 @@ class RetroarchLauncher(LauncherABC):
             kwargs["intent"]   = "android.intent.action.MAIN"
             kwargs["category"] = "android.intent.category.LAUNCHER"
 
-            arguments.append('ROM \'$rom$\'')
+            arguments.append("ROM '$rom$'")
             arguments.append(f"LIBRETRO {self.launcher_settings['retro_core']}")
             arguments.append(f"CONFIGFILE {self.launcher_settings['retro_config']}")
             

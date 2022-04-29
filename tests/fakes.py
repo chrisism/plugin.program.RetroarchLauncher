@@ -84,7 +84,7 @@ class FakeExecutor(ExecutorABC):
     def getActualKwargs(self):
         return self.actualKwargs
 
-    def execute(self, application: str, non_blocking: bool, *args, **kwargs):
+    def execute(self, application: str, *args, **kwargs):
         self.actualApplication = application
         self.actualKwargs = dict(kwargs)
         self.actualArgs = list(args)
