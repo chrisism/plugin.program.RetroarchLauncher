@@ -302,7 +302,8 @@ class RetroarchLauncher(LauncherABC):
         if io.is_android():
             android_app_path = self.launcher_settings['application']
             android_app = next(s for s in reversed(android_app_path.split('/')) if s)
-            application = f"{android_app}/.browser.retroactivity.RetroActivityFuture"
+            #application = f"{android_app}/.browser.retroactivity.RetroActivityFuture"
+            application = android_app
 
         # TODO other os
         return application
@@ -315,14 +316,17 @@ class RetroarchLauncher(LauncherABC):
             arguments.append('"$rom$"')
             
         if io.is_android():
-            kwargs["intent"]   = "android.intent.action.MAIN"
+            kwargs["intent"] = "android.intent.action.MAIN"
             kwargs["category"] = "android.intent.category.LAUNCHER"
+            kwargs["flags"] = "270532608" #  FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+            kwargs["className"] = "com.retroarch.browser.retroactivity.RetroActivityFuture"
 
-            arguments.append("ROM '$rom$'")
+            arguments.append("ROM $rom$")
             arguments.append(f"LIBRETRO {self.launcher_settings['retro_core']}")
             arguments.append(f"CONFIGFILE {self.launcher_settings['retro_config']}")
+            arguments.append(f"REFRESH 60")
             
-            # args += '-e IME com.android.inputmethod.latin/.LatinIME -e REFRESH 60'
+            # arguments.append(f"IME com.android.inputmethod.latin/.LatinIME")
 
         return super().get_arguments(*arguments, **kwargs)
     
