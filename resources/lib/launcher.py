@@ -52,11 +52,11 @@ class RetroarchLauncher(LauncherABC):
         logger.debug('RetroarchLauncher::_builder_get_wizard() Starting ...')
         wizard = kodi.WizardDialog_Dummy(wizard, 'application', self._builder_get_retroarch_app_folder())
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'application', 'Select the Retroarch path',
-            0, '')
+            0, '', '')
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_config', 'Select the configuration',
             self._builder_get_available_retroarch_configurations)
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'retro_config', 'Select the configuration',
-            0, '', None, self._builder_user_selected_custom_browsing)
+            0, '', '', None, self._builder_user_selected_custom_browsing)
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_core_info', 'Select the core',
             self._builder_get_available_retroarch_cores, self._builder_load_selected_core_info)
         wizard = kodi.WizardDialog_Keyboard(wizard, 'retro_core_info', 'Enter path to core file',
