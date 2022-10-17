@@ -50,9 +50,13 @@ class RetroarchLauncher(LauncherABC):
     #
     def _builder_get_wizard(self, wizard):
         logger.debug('RetroarchLauncher::_builder_get_wizard() Starting ...')
-        wizard = kodi.WizardDialog_Dummy(wizard, 'application', self._builder_get_retroarch_app_folder())
+        wizard = kodi.WizardDialog_DictionarySelection(wizard, 'application', 
+            'Select the Retroarch application path',
+            self._builder_get_retroarch_app_folders)
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'application', 'Select the Retroarch path',
-            0, '', '')
+            0, '', '', None, self._builder_user_selected_custom_browsing)
+        wizard = kodi.WizardDialog_Keyboard(wizard, 'application', 'Enter path to Retroarch',
+            None, self._builder_user_selected_custom_typing)
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_config', 'Select the configuration',
             self._builder_get_available_retroarch_configurations)
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'retro_config', 'Select the configuration',
@@ -86,7 +90,10 @@ class RetroarchLauncher(LauncherABC):
         self.launcher_settings['secname'] = core_FN.getBaseNoExt()
         return super(RetroarchLauncher, self)._build_post_wizard_hook()
 
-    def _builder_get_retroarch_app_folder(self):
+    def _builder_get_retroarch_app_folders(self, item_key, launcher):
+        options = collections.OrderedDict()
+        options['BROWSE'] = 'Browse for Retroarch path'
+        options['TYPE'] = 'Enter Retroarch path manually'
 
         retroarch_dir = settings.getSetting('retroarch_exec_path')
         if retroarch_dir != '':        
@@ -94,7 +101,7 @@ class RetroarchLauncher(LauncherABC):
             retroarch_folder = io.FileName(retroarch_dir, isdir = True)
             if retroarch_folder.exists():
                 logger.debug(f"Preset Retroarch directory: {retroarch_folder.getPath()}")
-                return retroarch_folder.getPath()
+                options[retroarch_folder.getPath()] = retroarch_folder.getPath()
 
         if io.is_android():
             # --- Android ---
@@ -105,15 +112,14 @@ class RetroarchLauncher(LauncherABC):
                 '/data/user/0/com.retroarch'
             ]
             for retroach_folder_path in android_retroarch_folders:
-                logger.debug('_builder_get_retroarch_app_folder() Android testing dir:{}'.format(retroach_folder_path))
                 retroarch_folder = io.FileName(retroach_folder_path)
                 if retroarch_folder.exists():
-                    logger.debug('Preset Retroarch directory: {}'.format(retroarch_folder.getPath()))
-                    return retroarch_folder.getPath()
+                    logger.debug(f'Preset Retroarch directory: {retroarch_folder.getPath()}')
+                    options[retroarch_folder.getPath()] = retroarch_folder.getPath()
 
         logger.debug('No Retroarch directory preset')
-        return '/'
-
+        return options
+        
     def _builder_get_available_retroarch_configurations(self, item_key, launcher):
         configs = collections.OrderedDict()
         configs['BROWSE'] = 'Browse for configuration'
@@ -179,7 +185,6 @@ class RetroarchLauncher(LauncherABC):
             
             if info_file.getBaseNoExt() == '00_example_libretro':
                 continue
-                
             logger.debug("get_available_retroarch_cores() adding core using info '{0}'".format(info_file.getPath()))    
 
             # check if core exists, if android just skip and guess it exists
@@ -246,6 +251,14 @@ class RetroarchLauncher(LauncherABC):
         options[self._change_launcher_arguments]= f"Modify Arguments: '{self.launcher_settings['args']}'"
         return options
     
+    def _builder_user_selected_custom_typing(self, item_key, launcher):
+        if launcher[item_key] == 'TYPE':
+            options = self._builder_get_retroarch_app_folders(item_key, launcher)
+            if len(options) > 2:
+                launcher[item_key] = list(options.values())[2]
+            return True
+        return False
+
     def _change_retroarch_path(self):
         current_application = self.launcher_settings['application']
         selected_application = kodi.browse(0, 'Select the Retroarch App path', 'files',
