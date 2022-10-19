@@ -54,13 +54,13 @@ class RetroarchLauncher(LauncherABC):
             'Select the Retroarch application path',
             self._builder_get_retroarch_app_folders)
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'application', 'Select the Retroarch path',
-            0, '', '', None, self._builder_user_selected_custom_browsing)
+            0, '', 'files', None, self._builder_user_selected_custom_browsing)
         wizard = kodi.WizardDialog_Keyboard(wizard, 'application', 'Enter path to Retroarch',
-            None, self._builder_user_selected_custom_typing)
+            None, self._builder_user_selected_to_type_path)
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_config', 'Select the configuration',
             self._builder_get_available_retroarch_configurations)
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'retro_config', 'Select the configuration',
-            0, '', '', None, self._builder_user_selected_custom_browsing)
+            0, '', 'files', None, self._builder_user_selected_custom_browsing)
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_core_info', 'Select the core',
             self._builder_get_available_retroarch_cores, self._builder_load_selected_core_info)
         wizard = kodi.WizardDialog_Keyboard(wizard, 'retro_core_info', 'Enter path to core file',
@@ -134,11 +134,11 @@ class RetroarchLauncher(LauncherABC):
             retroarch_folders.append(io.FileName('/data/user/0/com.retroarch/'))
 
         for retroarch_folder in retroarch_folders:
-            logger.debug("get_available_retroarch_configurations() scanning path '{0}'".format(retroarch_folder.getPath()))
+            logger.debug(f"get_available_retroarch_configurations() scanning path '{retroarch_folder.getPath()}'")
             files = retroarch_folder.recursiveScanFilesInPath('*.cfg')
             if len(files) < 1: continue
             for file in files:
-                logger.debug("get_available_retroarch_configurations() adding config file '{0}'".format(file.getPath()))
+                logger.debug(f"get_available_retroarch_configurations() adding config file '{file.getPath()}'")
                 configs[file.getPath()] = file.getBaseNoExt()
 
             return configs
@@ -243,6 +243,14 @@ class RetroarchLauncher(LauncherABC):
         
         return input
 
+    def _builder_user_selected_to_type_path(self, item_key, launcher):
+        if launcher[item_key] == 'TYPE':
+            options = self._builder_get_retroarch_app_folders(item_key, launcher)
+            if len(options) > 2:
+                launcher[item_key] = list(options.values())[2]
+            return True
+        return False
+
     def _builder_get_edit_options(self) -> dict:
         options = collections.OrderedDict()
         options[self._change_retroarch_path]    = f"Change Retroarch path ({self.launcher_settings['application']})"
@@ -251,14 +259,6 @@ class RetroarchLauncher(LauncherABC):
         options[self._change_launcher_arguments]= f"Modify Arguments: '{self.launcher_settings['args']}'"
         return options
     
-    def _builder_user_selected_custom_typing(self, item_key, launcher):
-        if launcher[item_key] == 'TYPE':
-            options = self._builder_get_retroarch_app_folders(item_key, launcher)
-            if len(options) > 2:
-                launcher[item_key] = list(options.values())[2]
-            return True
-        return False
-
     def _change_retroarch_path(self):
         current_application = self.launcher_settings['application']
         selected_application = kodi.browse(0, 'Select the Retroarch App path', 'files',
