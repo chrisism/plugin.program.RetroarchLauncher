@@ -26,8 +26,6 @@ from akl import settings
 from akl.utils import io, kodi
 from akl.launchers import LauncherABC
 
-logger = logging.getLogger(__name__)
-
 # -------------------------------------------------------------------------------------------------
 # Read RetroarchLauncher.md
 # -------------------------------------------------------------------------------------------------
@@ -49,7 +47,7 @@ class RetroarchLauncher(LauncherABC):
     # Creates a new launcher using a wizard of dialogs.
     #
     def _builder_get_wizard(self, wizard):
-        logger.debug('RetroarchLauncher::_builder_get_wizard() Starting ...')
+        logging.debug('RetroarchLauncher::_builder_get_wizard() Starting ...')
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'application', 
             'Select the Retroarch application path',
             self._builder_get_retroarch_app_folders)
@@ -80,11 +78,11 @@ class RetroarchLauncher(LauncherABC):
     # If any condition fails abort Retroarch launcher creation.
     #
     def _build_pre_wizard_hook(self):
-        logger.debug('RetroarchLauncher::_build_pre_wizard_hook() Starting ...')
+        logging.debug('RetroarchLauncher::_build_pre_wizard_hook() Starting ...')
         return True
 
     def _build_post_wizard_hook(self):
-        logger.debug('RetroarchLauncher::_build_post_wizard_hook() Starting ...')
+        logging.debug('RetroarchLauncher::_build_post_wizard_hook() Starting ...')
         core = self.launcher_settings['retro_core_info']
         core_FN = io.FileName(core)        
         self.launcher_settings['secname'] = core_FN.getBaseNoExt()
@@ -100,7 +98,7 @@ class RetroarchLauncher(LauncherABC):
             # --- All platforms except Android ---
             retroarch_folder = io.FileName(retroarch_dir, isdir = True)
             if retroarch_folder.exists():
-                logger.debug(f"Preset Retroarch directory: {retroarch_folder.getPath()}")
+                logging.debug(f"Preset Retroarch directory: {retroarch_folder.getPath()}")
                 options[retroarch_folder.getPath()] = retroarch_folder.getPath()
 
         if io.is_android():
@@ -114,10 +112,10 @@ class RetroarchLauncher(LauncherABC):
             for retroach_folder_path in android_retroarch_folders:
                 retroarch_folder = io.FileName(retroach_folder_path)
                 if retroarch_folder.exists():
-                    logger.debug(f'Preset Retroarch directory: {retroarch_folder.getPath()}')
+                    logging.debug(f'Preset Retroarch directory: {retroarch_folder.getPath()}')
                     options[retroarch_folder.getPath()] = retroarch_folder.getPath()
 
-        logger.debug('No Retroarch directory preset')
+        logging.debug('No Retroarch directory preset')
         return options
         
     def _builder_get_available_retroarch_configurations(self, item_key, launcher):
@@ -134,11 +132,11 @@ class RetroarchLauncher(LauncherABC):
             retroarch_folders.append(io.FileName('/data/user/0/com.retroarch/'))
 
         for retroarch_folder in retroarch_folders:
-            logger.debug(f"get_available_retroarch_configurations() scanning path '{retroarch_folder.getPath()}'")
+            logging.debug(f"get_available_retroarch_configurations() scanning path '{retroarch_folder.getPath()}'")
             files = retroarch_folder.recursiveScanFilesInPath('*.cfg')
             if len(files) < 1: continue
             for file in files:
-                logger.debug(f"get_available_retroarch_configurations() adding config file '{file.getPath()}'")
+                logging.debug(f"get_available_retroarch_configurations() adding config file '{file.getPath()}'")
                 configs[file.getPath()] = file.getBaseNoExt()
 
             return configs
@@ -156,7 +154,7 @@ class RetroarchLauncher(LauncherABC):
 
         config_file = io.FileName(launcher['retro_config'])
         if not config_file.exists():
-            logger.warning('Retroarch config file not found: {}'.format(config_file.getPath()))
+            logging.warning('Retroarch config file not found: {}'.format(config_file.getPath()))
             kodi.notify_error('Retroarch config file not found {}. Change path first.'.format(config_file.getPath()))
             return cores_sorted
 
@@ -165,10 +163,10 @@ class RetroarchLauncher(LauncherABC):
 
         info_folder   = self._create_path_from_retroarch_setting(configuration['libretro_info_path'], parent_dir)
         cores_folder  = self._create_path_from_retroarch_setting(configuration['libretro_directory'], parent_dir)
-        logger.debug("get_available_retroarch_cores() scanning path '{0}'".format(cores_folder.getPath()))
+        logging.debug("get_available_retroarch_cores() scanning path '{0}'".format(cores_folder.getPath()))
 
         if not info_folder.exists():
-            logger.warning('Retroarch info folder not found {}'.format(info_folder.getPath()))
+            logging.warning('Retroarch info folder not found {}'.format(info_folder.getPath()))
             kodi.notify_error('Retroarch info folder not found {}. Read documentation'.format(info_folder.getPath()))
             return cores_sorted
     
@@ -185,21 +183,21 @@ class RetroarchLauncher(LauncherABC):
             
             if info_file.getBaseNoExt() == '00_example_libretro':
                 continue
-            logger.debug("get_available_retroarch_cores() adding core using info '{0}'".format(info_file.getPath()))    
+            logging.debug("get_available_retroarch_cores() adding core using info '{0}'".format(info_file.getPath()))    
 
             # check if core exists, if android just skip and guess it exists
             if not io.is_android():
                 core_file = self._switch_info_to_core_file(info_file, cores_folder, cores_ext)
                 if not core_file.exists():
-                    logger.warning('get_available_retroarch_cores() Cannot find "{}". Skipping info "{}"'.format(core_file.getPath(), info_file.getBase()))
+                    logging.warning('get_available_retroarch_cores() Cannot find "{}". Skipping info "{}"'.format(core_file.getPath(), info_file.getBase()))
                     continue
-                logger.debug("get_available_retroarch_cores() using core '{0}'".format(core_file.getPath()))
+                logging.debug("get_available_retroarch_cores() using core '{0}'".format(core_file.getPath()))
                 
             core_info = info_file.readPropertyFile()
             if 'display_name' in core_info:
                 cores[info_file.getPath()] = core_info['display_name']
             else:
-                logger.warning(f'Cannot read display name for core {info_file.getBaseNoExt()}')
+                logging.warning(f'Cannot read display name for core {info_file.getBaseNoExt()}')
                 cores[info_file.getPath()] = info_file.getBaseNoExt()
                 
         cores_sorted['BROWSE'] = 'Manual enter path to core'        
@@ -276,10 +274,10 @@ class RetroarchLauncher(LauncherABC):
         selected_option = dialog.select('Select Retroarch config', options)
             
         if selected_option is None:
-            logger.debug('_change_config(): Selected option = NONE')
+            logging.debug('_change_config(): Selected option = NONE')
             return
                 
-        logger.debug(f'_change_config(): Selected option = {selected_option}')
+        logging.debug(f'_change_config(): Selected option = {selected_option}')
         self.launcher_settings['retro_config'] = selected_option
 
     def _change_core(self):
@@ -289,10 +287,10 @@ class RetroarchLauncher(LauncherABC):
         selected_option = dialog.select('Select Retroach Core', options)
      
         if selected_option is None:
-            logger.debug('_change_core(): Selected option = NONE')
+            logging.debug('_change_core(): Selected option = NONE')
             return
                 
-        logger.debug(f'_change_core(): Selected option = {selected_option}')
+        logging.debug(f'_change_core(): Selected option = {selected_option}')
         self._builder_load_selected_core_info(selected_option, 'retro_core_info', self.launcher_settings)
             
     def _change_launcher_arguments(self):
