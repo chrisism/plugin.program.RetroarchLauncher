@@ -59,6 +59,8 @@ class RetroarchLauncher(LauncherABC):
             self._builder_get_available_retroarch_configurations)
         wizard = kodi.WizardDialog_FileBrowse(wizard, 'retro_config', 'Select the configuration',
             0, '', 'files', None, self._builder_user_selected_custom_browsing)
+        wizard = kodi.WizardDialog_Keyboard(wizard, 'retro_config', 'Enter path to configuration',
+            None, self._builder_user_selected_to_type_path)
         wizard = kodi.WizardDialog_DictionarySelection(wizard, 'retro_core_info', 'Select the core',
             self._builder_get_available_retroarch_cores, self._builder_load_selected_core_info)
         wizard = kodi.WizardDialog_Keyboard(wizard, 'retro_core_info', 'Enter path to core file',
@@ -121,6 +123,7 @@ class RetroarchLauncher(LauncherABC):
     def _builder_get_available_retroarch_configurations(self, item_key, launcher):
         configs = collections.OrderedDict()
         configs['BROWSE'] = 'Browse for configuration'
+        configs['TYPE'] = 'Enter configuration path manually'
 
         retroarch_folders:typing.List[io.FileName] = []
         retroarch_folders.append(io.FileName(launcher['application']))
@@ -130,13 +133,15 @@ class RetroarchLauncher(LauncherABC):
             retroarch_folders.append(io.FileName('/data/data/com.retroarch/'))
             retroarch_folders.append(io.FileName('/storage/sdcard0/Android/data/com.retroarch/'))
             retroarch_folders.append(io.FileName('/data/user/0/com.retroarch/'))
+            retroarch_folders.append(io.FileName('/storage/emulated/0/Retroarch/'))
 
         for retroarch_folder in retroarch_folders:
-            logging.debug(f"get_available_retroarch_configurations() scanning path '{retroarch_folder.getPath()}'")
+            logging.debug(f"scanning path '{retroarch_folder.getPath()}'")
             files = retroarch_folder.recursiveScanFilesInPath('*.cfg')
-            if len(files) < 1: continue
+            if len(files) == 0: 
+                continue
             for file in files:
-                logging.debug(f"get_available_retroarch_configurations() adding config file '{file.getPath()}'")
+                logging.debug(f"adding config file '{file.getPath()}'")
                 configs[file.getPath()] = file.getBaseNoExt()
 
             return configs
@@ -163,7 +168,7 @@ class RetroarchLauncher(LauncherABC):
 
         info_folder   = self._create_path_from_retroarch_setting(configuration['libretro_info_path'], parent_dir)
         cores_folder  = self._create_path_from_retroarch_setting(configuration['libretro_directory'], parent_dir)
-        logging.debug("get_available_retroarch_cores() scanning path '{0}'".format(cores_folder.getPath()))
+        logging.debug(f"scanning path '{cores_folder.getPath()}'")
 
         if not info_folder.exists():
             logging.warning('Retroarch info folder not found {}'.format(info_folder.getPath()))
@@ -243,9 +248,7 @@ class RetroarchLauncher(LauncherABC):
 
     def _builder_user_selected_to_type_path(self, item_key, launcher):
         if launcher[item_key] == 'TYPE':
-            options = self._builder_get_retroarch_app_folders(item_key, launcher)
-            if len(options) > 2:
-                launcher[item_key] = list(options.values())[2]
+            launcher[item_key] = ''
             return True
         return False
 
