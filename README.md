@@ -32,7 +32,7 @@ Details about the CLI arguments can be found [here](https://docs.libretro.com/gu
 
 The default paths for Retroarch cores and info files under Android are only scannable when the OS
 is rooted. When running on a non-rooted Android box the best option is to open up Retroarch and
-configure paths for the cores and infos that are actually accessible. 
+configure paths for the cores and infos that are actually accessible. The default path "/storage/emulated/0/Retroarch/" where all the save files are stored, mostly is. It is possible to use the normal paths, however you won't be able to select files through the Kodi file manager. All paths should be manually inserted in that particular case.  
 Don't forget to update/download the cores and info file after changing the paths.
 
 ### Kodi forum thread ###

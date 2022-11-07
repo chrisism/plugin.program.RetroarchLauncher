@@ -59,15 +59,18 @@ class Test_Launcher(unittest.TestCase):
         })
         api_rom_mock.return_value = rom
 
-        expected = 'com.retroarch/.browser.retroactivity.RetroActivityFuture'
+        expected = 'com.retroarch'
         expectedArgs = [
-            "ROM 'superrom.zip'",  
+            "ROM superrom.zip",  
             "LIBRETRO /data/data/com.retroarch/cores/mame_libretro_android.so",
-            "CONFIGFILE /storage/emulated/0/Android/data/com.retroarch/files/retroarch.cfg"
+            "CONFIGFILE /storage/emulated/0/Android/data/com.retroarch/files/retroarch.cfg",
+            "REFRESH 60"
         ]
         expectedKwargs = {
             "intent": "android.intent.action.MAIN",
-            "category": "android.intent.category.LAUNCHER"
+            "category": "android.intent.category.LAUNCHER",
+            "flags": "270532608",
+            "className": "com.retroarch.browser.retroactivity.RetroActivityFuture"
         }
         
         # act
