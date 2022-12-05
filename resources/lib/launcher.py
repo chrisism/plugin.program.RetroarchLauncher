@@ -319,6 +319,9 @@ class RetroarchLauncher(LauncherABC):
             #application = f"{android_app}/.browser.retroactivity.RetroActivityFuture"
             application = android_app
 
+        if io.is_linux():
+            application = 'retroarch' 
+
         # TODO other os
         return application
 
