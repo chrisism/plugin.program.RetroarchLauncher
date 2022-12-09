@@ -311,16 +311,17 @@ class RetroarchLauncher(LauncherABC):
         if io.is_windows():
             app = io.FileName(self.launcher_settings['application'])
             app = app.append('retroarch.exe') 
-            application = app.getPath()
+            return app.getPath()
             
         if io.is_android():
             android_app_path = self.launcher_settings['application']
             android_app = next(s for s in reversed(android_app_path.split('/')) if s)
             #application = f"{android_app}/.browser.retroactivity.RetroActivityFuture"
-            application = android_app
+            return android_app
 
         if io.is_linux():
-            application = 'retroarch' 
+            app = io.FileName(self.launcher_settings['application'])
+            return app
 
         # TODO other os
         return application
