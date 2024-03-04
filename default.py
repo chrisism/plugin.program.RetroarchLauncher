@@ -21,33 +21,32 @@ from akl.launchers import ExecutionSettings, get_executor_factory
 
 from resources.lib.launcher import RetroarchLauncher
 
-kodilogging.config() 
-logger = logging.getLogger(__name__)
-
-
+kodilogging.config()
 # --- Addon object (used to access settings) ---
-addon           = xbmcaddon.Addon()
-addon_id        = addon.getAddonInfo('id')
-addon_version   = addon.getAddonInfo('version')
+addon = xbmcaddon.Addon()
+addon_id = addon.getAddonInfo('id')
+addon_version = addon.getAddonInfo('version')
+
 
 # ---------------------------------------------------------------------------------------------
 # This is the plugin entry point.
 # ---------------------------------------------------------------------------------------------
 def run_plugin():
+    os_name = io.is_which_os()
+    
     # --- Some debug stuff for development ---
-    logger.info('------------ Called Advanced Kodi Launcher Plugin: Retroarch Launcher ------------')
-    logger.info('addon.id         "{}"'.format(addon_id))
-    logger.info('addon.version    "{}"'.format(addon_version))
-    logger.info('sys.platform     "{}"'.format(sys.platform))
-    if io.is_android(): logger.info('OS               "Android"')
-    if io.is_windows(): logger.info('OS               "Windows"')
-    if io.is_osx():     logger.info('OS               "OSX"')
-    if io.is_linux():   logger.info('OS               "Linux"')
-    for i in range(len(sys.argv)): logger.info('sys.argv[{}] "{}"'.format(i, sys.argv[i]))
+    logging.info('------------ Called Advanced Kodi Launcher Plugin: Retroarch Launcher ------------')
+    logging.info(f'addon.id         "{addon_id}"')
+    logging.info(f'addon.version    "{addon_version}"')
+    logging.info(f'sys.platform     "{sys.platform}"')
+    logging.info(f'OS               "{os_name}"')
+    
+    for i in range(len(sys.argv)):
+        logging.info(f'sys.argv[{i}] "{sys.argv[i]}"')
 
     parser = argparse.ArgumentParser(prog='script.akl.retroarchlauncher')
     parser.add_argument('--cmd', help="Command to execute", choices=['launch', 'scan', 'scrape', 'configure'])
-    parser.add_argument('--type',help="Plugin type", choices=['LAUNCHER', 'SCANNER', 'SCRAPER'], default=constants.AddonType.LAUNCHER.name)
+    parser.add_argument('--type', help="Plugin type", choices=['LAUNCHER', 'SCANNER', 'SCRAPER'], default=constants.AddonType.LAUNCHER.name)
     parser.add_argument('--server_host', type=str, help="Host")
     parser.add_argument('--server_port', type=int, help="Port")
     parser.add_argument('--rom_id', type=str, help="ROM ID")
@@ -58,33 +57,36 @@ def run_plugin():
     try:
         args = parser.parse_args()
     except Exception as ex:
-        logger.error('Exception in plugin', exc_info=ex)
+        logging.error('Exception in plugin', exc_info=ex)
         kodi.dialog_OK(text=parser.usage)
         return
     
-    if   args.type == constants.AddonType.LAUNCHER.name and args.cmd == 'launch': launch_rom(args)
-    elif args.type == constants.AddonType.LAUNCHER.name and args.cmd == 'configure': configure_launcher(args)
+    if args.type == constants.AddonType.LAUNCHER.name and args.cmd == 'launch':
+        launch_rom(args)
+    elif args.type == constants.AddonType.LAUNCHER.name and args.cmd == 'configure':
+        configure_launcher(args)
     else:
         kodi.dialog_OK(text=parser.format_help())
     
-    logger.debug('Advanced Kodi Launcher Plugin:  Retroarch Launcher -> exit')
+    logging.debug('Advanced Kodi Launcher Plugin:  Retroarch Launcher -> exit')
     
+ 
 # ---------------------------------------------------------------------------------------------
 # Launcher methods.
 # ---------------------------------------------------------------------------------------------
 # Arguments: --settings (json) --rom_args (json) --is_non_blocking --launcher_id --rom_id
 def launch_rom(args):
-    logger.debug('Retroarch Launcher: Starting ...')
+    logging.debug('Retroarch Launcher: Starting ...')
     
     try:
         execution_settings = ExecutionSettings()
-        execution_settings.delay_tempo              = settings.getSettingAsInt('delay_tempo')
-        execution_settings.display_launcher_notify  = settings.getSettingAsBool('display_launcher_notify')
-        execution_settings.is_non_blocking          = settings.getSettingAsBool('is_non_blocking')
-        execution_settings.media_state_action       = settings.getSettingAsInt('media_state_action')
-        execution_settings.suspend_audio_engine     = settings.getSettingAsBool('suspend_audio_engine')
-        execution_settings.suspend_screensaver      = settings.getSettingAsBool('suspend_screensaver')
-        execution_settings.suspend_joystick_engine  = settings.getSettingAsBool('suspend_joystick')
+        execution_settings.delay_tempo = settings.getSettingAsInt('delay_tempo')
+        execution_settings.display_launcher_notify = settings.getSettingAsBool('display_launcher_notify')
+        execution_settings.is_non_blocking = settings.getSettingAsBool('is_non_blocking')
+        execution_settings.media_state_action = settings.getSettingAsInt('media_state_action')
+        execution_settings.suspend_audio_engine = settings.getSettingAsBool('suspend_audio_engine')
+        execution_settings.suspend_screensaver = settings.getSettingAsBool('suspend_screensaver')
+        execution_settings.suspend_joystick_engine = settings.getSettingAsBool('suspend_joystick')
         
         addon_dir = kodi.getAddonDir()
         report_path = addon_dir.pjoin('reports')
@@ -93,12 +95,12 @@ def launch_rom(args):
         
         executor_factory = get_executor_factory(report_path)
         launcher = RetroarchLauncher(
-            args.akl_addon_id, 
-            args.romcollection_id, 
-            args.rom_id, 
-            args.server_host, 
+            args.akl_addon_id,
+            args.romcollection_id,
+            args.rom_id,
+            args.server_host,
             args.server_port,
-            executor_factory, 
+            executor_factory,
             execution_settings)
         
         launcher.launch()
