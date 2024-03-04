@@ -1,6 +1,6 @@
 kodi.tools==1.1.0
 Kodistubs==19.0.3
 pytest==6.2.5
-script.module.akl==1.0.7rc7
+script.module.akl==1.1.0rc0
 requests==2.22.0
 flake8==4.0.1

@@ -9,7 +9,6 @@ from __future__ import division
 import sys
 import argparse
 import logging
-import json
 
 # --- Kodi stuff ---
 import xbmcaddon
@@ -22,6 +21,8 @@ from akl.launchers import ExecutionSettings, get_executor_factory
 from resources.lib.launcher import RetroarchLauncher
 
 kodilogging.config()
+logger = logging.getLogger(__name__)
+
 # --- Addon object (used to access settings) ---
 addon = xbmcaddon.Addon()
 addon_id = addon.getAddonInfo('id')
@@ -50,9 +51,7 @@ def run_plugin():
     parser.add_argument('--server_host', type=str, help="Host")
     parser.add_argument('--server_port', type=int, help="Port")
     parser.add_argument('--rom_id', type=str, help="ROM ID")
-    parser.add_argument('--romcollection_id', type=str, help="ROM Collection ID")
     parser.add_argument('--akl_addon_id', type=str, help="Addon configuration ID")
-    parser.add_argument('--settings', type=json.loads, help="Specific run setting")
     
     try:
         args = parser.parse_args()
@@ -74,7 +73,7 @@ def run_plugin():
 # ---------------------------------------------------------------------------------------------
 # Launcher methods.
 # ---------------------------------------------------------------------------------------------
-# Arguments: --settings (json) --rom_args (json) --is_non_blocking --launcher_id --rom_id
+# Arguments: --cmd launch --akl_addon_id --rom_id
 def launch_rom(args):
     logging.debug('Retroarch Launcher: Starting ...')
     
@@ -90,13 +89,13 @@ def launch_rom(args):
         
         addon_dir = kodi.getAddonDir()
         report_path = addon_dir.pjoin('reports')
-        if not report_path.exists(): report_path.makedirs()    
-        report_path = report_path.pjoin('{}-{}.txt'.format(args.akl_addon_id, args.rom_id))
+        if not report_path.exists():
+            report_path.makedirs()
+        report_path = report_path.pjoin(f'{args.akl_addon_id}-{args.rom_id}.txt')
         
         executor_factory = get_executor_factory(report_path)
         launcher = RetroarchLauncher(
             args.akl_addon_id,
-            args.romcollection_id,
             args.rom_id,
             args.server_host,
             args.server_port,
@@ -109,22 +108,23 @@ def launch_rom(args):
         logger.error('Exception while executing ROM', exc_info=e)
         kodi.notify_error('Failed to execute ROM')     
 
-# Arguments: --settings (json) --scanner_id (opt) --romcollection_id --launcher_settings (opt)
+
+# Arguments: --akl_addon_id --rom_id
 def configure_launcher(args):
     logger.debug('Retroarch Launcher: Configuring ...')
     
     launcher = RetroarchLauncher(
-            args.akl_addon_id, 
-            args.romcollection_id, 
-            args.rom_id, 
-            args.server_host, 
-            args.server_port)
+        args.akl_addon_id,
+        args.rom_id,
+        args.server_host,
+        args.server_port)
         
     if launcher.build():
         launcher.store_settings()
         return
     
     kodi.notify_warn('Cancelled creating launcher')
+
 
 # ---------------------------------------------------------------------------------------------
 # RUN
@@ -134,4 +134,3 @@ try:
 except Exception as ex:
     logger.fatal('Exception in plugin', exc_info=ex)
     kodi.notify_error("General failure")
-    
