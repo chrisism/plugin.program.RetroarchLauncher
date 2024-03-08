@@ -257,7 +257,7 @@ class RetroarchLauncher(LauncherABC):
         return False
 
     def _builder_get_edit_options(self) -> dict:
-        options = collections.OrderedDict()
+        options = super()._builder_get_edit_options()
         options[self._change_retroarch_path] = f"Change Retroarch path ({self.launcher_settings['application']})"
         options[self._change_config] = f"Change config: '{self.launcher_settings['retro_config']}'"
         options[self._change_core] = f"Change core: '{self.launcher_settings['retro_core']}'"
