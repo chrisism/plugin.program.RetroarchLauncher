@@ -244,6 +244,11 @@ class RetroarchLauncher(LauncherABC):
         launchers_settings['romcollection']['platform'] = core_info['systemname']
         launchers_settings['romcollection']['m_developer'] = core_info['manufacturer']
         launchers_settings['romcollection']['m_name'] = core_info['systemname']
+        
+        launchers_settings['source'] = {}
+        launchers_settings['source']['platform'] = core_info['systemname']
+        launchers_settings['source']['m_developer'] = core_info['manufacturer']
+        launchers_settings['source']['m_name'] = core_info['systemname']
 
         launchers_settings['scanners'] = {}
         launchers_settings['scanners']['romext'] = core_info['supported_extensions']
