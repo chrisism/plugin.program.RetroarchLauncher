@@ -106,7 +106,7 @@ def launch_rom(args):
         
     except Exception as e:
         logger.error('Exception while executing ROM', exc_info=e)
-        kodi.notify_error('Failed to execute ROM')     
+        kodi.notify_error('Failed to execute ROM')
 
 
 # Arguments: --akl_addon_id --rom_id

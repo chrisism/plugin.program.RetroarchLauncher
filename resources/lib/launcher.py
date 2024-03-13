@@ -141,7 +141,7 @@ class RetroarchLauncher(LauncherABC):
         for retroarch_folder in retroarch_folders:
             logging.debug(f"scanning path '{retroarch_folder.getPath()}'")
             files = retroarch_folder.recursiveScanFilesInPath('*.cfg')
-            if len(files) == 0: 
+            if len(files) == 0:
                 continue
             for file in files:
                 logging.debug(f"adding config file '{file.getPath()}'")
@@ -178,10 +178,10 @@ class RetroarchLauncher(LauncherABC):
             kodi.notify_error('Retroarch info folder not found {}. Read documentation'.format(info_folder.getPath()))
             return cores_sorted
     
-        # scan based on info folder and files since Retroarch on Android has it's core files in 
+        # scan based on info folder and files since Retroarch on Android has it's core files in
         # the app folder which is not readable without root privileges. Changing the cores folder
         # will not work since Retroarch won't be able to load cores from a different folder due
-        # to security reasons. Changing that setting under Android will only result in a reset 
+        # to security reasons. Changing that setting under Android will only result in a reset
         # of that value after restarting Retroarch ( https://forums.libretro.com/t/directory-settings-wont-save/12753/3 )
         # So we will scan based on info files (which setting path can be changed) and guess that
         # the core files will be available.
@@ -209,7 +209,7 @@ class RetroarchLauncher(LauncherABC):
                 logging.warning(f'Cannot read display name for core {info_file.getBaseNoExt()}')
                 cores[info_file.getPath()] = info_file.getBaseNoExt()
                 
-        cores_sorted['BROWSE'] = 'Manual enter path to core'        
+        cores_sorted['BROWSE'] = 'Manual enter path to core'
         for core_item in sorted(cores.items(), key=lambda x: x[1]):
             cores_sorted[core_item[0]] = core_item[1]
         return cores_sorted
@@ -272,14 +272,14 @@ class RetroarchLauncher(LauncherABC):
     def _change_retroarch_path(self):
         current_application = self.launcher_settings['application']
         selected_application = kodi.browse(0, 'Select the Retroarch App path', 'files',
-                                           '', False, False, current_application)
+                                           '', current_application, False, False)
 
         if selected_application is None or selected_application == current_application:
             return
         
         self.launcher_settings['application'] = selected_application
         
-    def _change_config(self, config_path):
+    def _change_config(self):
         options = self._builder_get_available_retroarch_configurations('retro_config', self.launcher_settings)
         dialog = kodi.OrdDictionaryDialog()
         
@@ -359,7 +359,7 @@ class RetroarchLauncher(LauncherABC):
     
     # ---------------------------------------------------------------------------------------------
     # Misc methods
-    # ---------------------------------------------------------------------------------------------    
+    # ---------------------------------------------------------------------------------------------
     def _create_path_from_retroarch_setting(self, path_from_setting: str, parent_dir: io.FileName):
         if path_from_setting.startswith(':\\'):
             path_from_setting = path_from_setting[2:]
