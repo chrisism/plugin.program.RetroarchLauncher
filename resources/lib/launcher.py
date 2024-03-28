@@ -338,9 +338,11 @@ class RetroarchLauncher(LauncherABC):
     def get_arguments(self, *args, **kwargs) -> typing.Tuple[list, dict]:
         arguments = list(args)
         if io.is_windows() or io.is_linux():
-            arguments.append(f'-L "{self.launcher_settings["retro_core"]}"')
-            arguments.append(f'-c "{self.launcher_settings["retro_config"]}"')
-            arguments.append('"$rom$"')
+            arguments.append('-L')
+            arguments.append(self.launcher_settings["retro_core"])
+            arguments.append('-c')
+            arguments.append(self.launcher_settings["retro_config"])
+            arguments.append('$rom$')
             
         if io.is_android():
             kwargs["intent"] = "android.intent.action.MAIN"
