@@ -23,16 +23,15 @@ class Test_Launcher(unittest.TestCase):
     @patch('akl.launchers.kodi', autospec=True)
     @patch('akl.utils.io.FileName', side_effect = FakeFile)
     @patch('akl.api.client_get_rom')
-    @patch('akl.api.client_get_collection_launcher_settings')
+    @patch('akl.api.client_get_launcher_settings')
     @patch('akl.executors.ExecutorFactory')
     def test_if_retroarch_launcher_will_apply_the_correct_arguments_when_running_on_android(self, 
             factory_mock:MagicMock, api_settings_mock:MagicMock, api_rom_mock: MagicMock, filename_mock, kodi_mock,
             is_linux_mock:MagicMock,is_android_mock:MagicMock, is_win_mock:MagicMock):
         
         # arrange
-        launcher_id     = random_string(10)
-        collection_id   = random_string(10)
-        rom_id          = random_string(10)
+        launcher_id = random_string(10)
+        rom_id = random_string(10)
 
         is_linux_mock.return_value = False
         is_win_mock.return_value = False
@@ -74,7 +73,7 @@ class Test_Launcher(unittest.TestCase):
         }
         
         # act
-        target = RetroarchLauncher(launcher_id, collection_id, None, 'localhost', 8080, factory_mock, ExecutionSettings())
+        target = RetroarchLauncher(launcher_id, None, 'localhost', 8080, factory_mock, ExecutionSettings())
         target.launch()
 
         # assert
@@ -90,7 +89,7 @@ class Test_Launcher(unittest.TestCase):
         
 
     @patch('resources.lib.launcher.io.is_android')
-    @patch('akl.api.client_get_collection_launcher_settings')
+    @patch('akl.api.client_get_launcher_settings')
     def test_retroarchlauncher_switching_core_to_info_file(self, api_settings_mock:MagicMock, is_android_mock:MagicMock):
         # arrange
         is_android_mock.return_value = True
@@ -109,7 +108,7 @@ class Test_Launcher(unittest.TestCase):
         launcher_settings['application'] = '/storage/emulated/0/Android/data/com.retroarch/'
         api_settings_mock.return_value = launcher_settings
         
-        target = RetroarchLauncher(None, random_string(5), None, None, 0, None, None)
+        target = RetroarchLauncher(None, random_string(5), None, 0, None, None)
                 
         # act
         actual = target._switch_core_to_info_file(core_path, info_path)
