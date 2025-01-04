@@ -7,14 +7,13 @@ from __future__ import unicode_literals
 from __future__ import division
 
 import sys
-import argparse
 import logging
 
 # --- Kodi stuff ---
 import xbmcaddon
 
 # AKL main imports
-from akl import settings, constants
+from akl import settings, addons
 from akl.utils import kodilogging, kodi, io
 from akl.launchers import ExecutionSettings, get_executor_factory
 
@@ -45,28 +44,21 @@ def run_plugin():
     for i in range(len(sys.argv)):
         logging.info(f'sys.argv[{i}] "{sys.argv[i]}"')
 
-    parser = argparse.ArgumentParser(prog='script.akl.retroarchlauncher')
-    parser.add_argument('--cmd', help="Command to execute", choices=['launch', 'scan', 'scrape', 'configure'])
-    parser.add_argument('--type', help="Plugin type", choices=['LAUNCHER', 'SCANNER', 'SCRAPER'], default=constants.AddonType.LAUNCHER.name)
-    parser.add_argument('--server_host', type=str, help="Host")
-    parser.add_argument('--server_port', type=int, help="Port")
-    parser.add_argument('--rom_id', type=str, help="ROM ID")
-    parser.add_argument('--akl_addon_id', type=str, help="Addon configuration ID")
-    
+    addon_args = addons.AklAddonArguments('script.akl.retroarchlauncher')
     try:
-        args = parser.parse_args()
+        addon_args.parse()
     except Exception as ex:
-        logging.error('Exception in plugin', exc_info=ex)
-        kodi.dialog_OK(text=parser.usage)
+        logger.error('Exception in plugin', exc_info=ex)
+        kodi.dialog_OK(text=addon_args.get_usage())
         return
     
-    if args.type == constants.AddonType.LAUNCHER.name and args.cmd == 'launch':
-        launch_rom(args)
-    elif args.type == constants.AddonType.LAUNCHER.name and args.cmd == 'configure':
-        configure_launcher(args)
+    if addon_args.get_command() == addons.AklAddonArguments.LAUNCH:
+        launch_rom(addon_args)
+    elif addon_args.get_command() == addons.AklAddonArguments.CONFIGURE_LAUNCHER:
+        configure_launcher(addon_args)
     else:
-        kodi.dialog_OK(text=parser.format_help())
-    
+        kodi.dialog_OK(text=addon_args.get_help())
+
     logging.debug('Advanced Kodi Launcher Plugin:  Retroarch Launcher -> exit')
     
  
@@ -74,7 +66,7 @@ def run_plugin():
 # Launcher methods.
 # ---------------------------------------------------------------------------------------------
 # Arguments: --cmd launch --akl_addon_id --rom_id
-def launch_rom(args):
+def launch_rom(args: addons.AklAddonArguments):
     logging.debug('Retroarch Launcher: Starting ...')
     
     try:
@@ -91,14 +83,14 @@ def launch_rom(args):
         report_path = addon_dir.pjoin('reports')
         if not report_path.exists():
             report_path.makedirs()
-        report_path = report_path.pjoin(f'{args.akl_addon_id}-{args.rom_id}.txt')
+        report_path = report_path.pjoin('{}-{}.txt'.format(args.get_akl_addon_id(), args.get_entity_id()))
         
         executor_factory = get_executor_factory(report_path)
         launcher = RetroarchLauncher(
-            args.akl_addon_id,
-            args.rom_id,
-            args.server_host,
-            args.server_port,
+            args.get_akl_addon_id(),
+            args.get_entity_id(),
+            args.get_webserver_host(),
+            args.get_webserver_port(),
             executor_factory,
             execution_settings)
         
@@ -110,14 +102,14 @@ def launch_rom(args):
 
 
 # Arguments: --akl_addon_id --rom_id
-def configure_launcher(args):
+def configure_launcher(args: addons.AklAddonArguments):
     logger.debug('Retroarch Launcher: Configuring ...')
     
     launcher = RetroarchLauncher(
-        args.akl_addon_id,
-        args.rom_id,
-        args.server_host,
-        args.server_port)
+        args.get_akl_addon_id(),
+        args.get_entity_id(),
+        args.get_webserver_host(),
+        args.get_webserver_port())
         
     if launcher.build():
         launcher.store_settings()
